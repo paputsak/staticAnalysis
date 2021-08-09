@@ -8,11 +8,11 @@
 		<version>2.5.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>handling-form-submission-complete</artifactId>
+	<groupId>com.sesame</groupId>
+	<artifactId>security-component</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>handling-form-submission-complete</name>
-	<description>Demo project for Spring Boot</description>
+	<name>security-component</name>
+	<description>Security Component for SESAME</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
