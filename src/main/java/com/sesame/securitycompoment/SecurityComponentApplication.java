@@ -1,7 +1,12 @@
 package com.sesame.securitycompoment;
 
+import capec.model.AttackPatterns;
+import capec.model.Capec;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import rvd.model.RvdVulnerability;
+
+import java.util.ArrayList;
 
 @SpringBootApplication
 public class SecurityComponentApplication {
@@ -29,10 +34,14 @@ public class SecurityComponentApplication {
 			" \\____/ \\___/ \\_|  |_/\\_|     \\___/ \\_| \\_/\\____/ \\_| \\_/  \\_/  \n" +
 			"                                                                \n" +
 			"                                                                ";
+	public static ArrayList<RvdVulnerability> rvdVulnerabilities;
+	public static AttackPatterns capecs;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SecurityComponentApplication.class, args);
 		System.out.println(logoName);
+
+
 
 	}
 
