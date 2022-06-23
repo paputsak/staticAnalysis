@@ -1,6 +1,8 @@
 package com.sesame.securitycompoment;
 
+import capec.model.AttackPattern;
 import capec.model.Capec;
+import capec.model.RelatedWeakness;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +42,7 @@ public class GreetingController {
 		//Generate the rvd database (rvdVulnerabilities) with the input from the rvdjson array
 		rvdVulnerabilities=rvdJson;
 
-		System.out.println(rvdVulnerabilities.get(1));
+		System.out.println("Local RVD Repository has been updated");
 		return "rvdresult";
 	}
 
@@ -48,9 +50,9 @@ public class GreetingController {
 	public String capecInsert(@RequestBody Capec capecJson) {
 		//public String capecInsert(@RequestBody String capecXML) {
 		//Generate the capec database (capecs) with the input from the capecXML array
-		capecs=capecJson.attack_Pattern_Catalog.attack_Patterns;
+		capecs=capecJson.attack_Pattern_Catalog.attack_Patterns.attack_Pattern;
 
-		System.out.println(capecs.attack_Pattern.get(0).related_Weaknesses.related_Weakness);
+		System.out.println("Local CAPEC repository has been updated");
 		return "rvdresult";
 	}
 
@@ -62,7 +64,43 @@ public class GreetingController {
 		//2) search capec based on the list of cwes to find the related list with capec ids
 		//capecs=cveId.attack_Pattern_Catalog.attack_Patterns;
 
+		ArrayList<String> cweFilteredArrayList = new ArrayList<>();
+		for (int i = 0; i <rvdVulnerabilities.size() ; i++) {
+
+			if (rvdVulnerabilities.get(i).cve.equals(cveId)){
+				cweFilteredArrayList.add(rvdVulnerabilities.get(i).cwe);
+
+			}
+		}
+		ArrayList<AttackPattern> capecFilteredArraylist = new ArrayList<>();
+		//Iterate all cwe from previous result to find the capecs
+		for (int i = 0; i < cweFilteredArrayList.size(); i++) {
+			String tempCWE=cweFilteredArrayList.get(i).substring(4);//remove the first 4 charactes eg: "CWE-115" becomes "115"
+			//String tempCWE=cweFilteredArrayList.get(i);
+
+
+			for (int j = 0; j <capecs.size() ; j++) {
+				AttackPattern tempCapec = capecs.get(j);
+				for (int k = 0; k <tempCapec.related_Weaknesses.related_Weakness.size() ; k++) {
+					RelatedWeakness tempRelatedWeakness=tempCapec.related_Weaknesses.related_Weakness.get(k);
+					if (tempRelatedWeakness.cWEID.equals(tempCWE)){
+						capecFilteredArraylist.add(tempCapec);
+
+					}
+				}
+			}
+		}
+		System.out.println("The following CAPECs have been identified as potential attacks related to :" + cveId);
+		for (int i = 0; i < capecFilteredArraylist.size(); i++) {
+			System.out.print(" "+capecFilteredArraylist.get(i).iD);
+
+		}
 		//System.out.println(capecs.attack_Pattern.get(0).related_Weaknesses.related_Weakness);
+
+
+
+
+
 		return "rvdresult";
 	}
 

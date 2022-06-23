@@ -1,5 +1,6 @@
 package com.sesame.securitycompoment;
 
+import capec.model.AttackPattern;
 import capec.model.AttackPatterns;
 import capec.model.Capec;
 import org.springframework.boot.SpringApplication;
@@ -35,7 +36,7 @@ public class SecurityComponentApplication {
 			"                                                                \n" +
 			"                                                                ";
 	public static ArrayList<RvdVulnerability> rvdVulnerabilities;
-	public static AttackPatterns capecs;
+	public static ArrayList<AttackPattern> capecs;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SecurityComponentApplication.class, args);
