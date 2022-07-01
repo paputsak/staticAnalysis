@@ -22,14 +22,20 @@
 <div id="mynetwork"></div>
 <p id="selection">Selection: 3</p>
 
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
+
+var message = "Manos";
+var nodeLabel = [[${node.label}]];
+
     // create an array with nodes
     var nodes = new vis.DataSet([
+        //{ th:text="'id: ' + ${node.id}", label: "Manos" },
+        { id: 0, label: [[${node.label}]] },
         { id: 1, label: "Robot crashes with a person", shape: "box", color: "#f7e39c" },
         { id: 2, label: "Attacker pupblishes \narbitary data to a topic", shape: "box", color: "#f7e39c" },
         { id: 3, label: "OR", color: "#f7e39c" },
         { id: 4, label: "Attacker uses ROS CLI", shape: "box", color: "#f7e39c" },
-        { id: 5, label: "Compromizes API", shape: "box", color: "#f7e39c" },
+        { id: 5, label: "Compromizes API", shape: "box", color: "#f7e39c" }
     ]);
 
     // create an array with edges
@@ -37,25 +43,25 @@
         { from: 1, to: 2, width: 3 },
         { from: 2, to: 3, width: 3 },
         { from: 3, to: 4, width: 3 },
-        { from: 3, to: 5, width: 3 },
+        { from: 3, to: 5, width: 3 }
     ]);
 
     // create a network
     var container = document.getElementById("mynetwork");
     var data = {
         nodes: nodes,
-        edges: edges,
+        edges: edges
     };
 
     var options = {
         layout: {
             hierarchical: {
                 direction: "UD",
-                sortMethod: "directed",
+                sortMethod: "directed"
             },
         },
         edges: {
-            arrows: "from",
+            arrows: "from"
         },
     };
     var network = new vis.Network(container, data, options);

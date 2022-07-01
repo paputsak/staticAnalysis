@@ -3,23 +3,19 @@ package com.sesame.securitycompoment;
 import capec.model.AttackPattern;
 import capec.model.Capec;
 import capec.model.RelatedWeakness;
+import graph.model.Node;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import rvd.model.RvdVulnerability;
 import static com.sesame.securitycompoment.SecurityComponentApplication.rvdVulnerabilities;
 import static com.sesame.securitycompoment.SecurityComponentApplication.capecs;
 import java.util.ArrayList;
 
-
-
 @Controller
 public class GreetingController {
 
-	@GetMapping("/greeting")
+	/*@GetMapping("/greeting")
 	public String greetingForm(Model model) {
 		model.addAttribute("greeting", new Greeting());
 		return "greeting";
@@ -35,8 +31,35 @@ public class GreetingController {
 	public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
 		model.addAttribute("greeting", greeting);
 		return "result";
+	}*/
+
+
+	/*@GetMapping("/greeting")
+	public String greeting(@RequestParam(name="name", required=false, defaultValue="World") Greeting greeting, Model model) {
+		model.addAttribute("greeting", greeting);
+		return "result";
+	}*/
+
+	@PostMapping("/greeting")
+	public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
+		model.addAttribute("greeting", greeting);
+		return "result";
 	}
 
+
+	@GetMapping("/attackgraph")
+	public String attackgraph(Model model) {
+		Node node = new Node();
+		node.setId("6");
+		node.setLabel("ManosManos");
+		model.addAttribute("node", node);
+		return "attackgraph";
+	}
+
+
+
+
+	///////////////////////////////////////////////////////////////////////////////////////
 	@PostMapping("/rvdinsert")
 	public String rvdInsert(@RequestBody ArrayList<RvdVulnerability> rvdJson) {
 		//Generate the rvd database (rvdVulnerabilities) with the input from the rvdjson array
@@ -94,22 +117,18 @@ public class GreetingController {
 
 		}
 		//System.out.println(capecs.attack_Pattern.get(0).related_Weaknesses.related_Weakness);
-
-
-
-
-
 		return "rvdresult";
 	}
-	public void generateAttachGraphFromCAPEC(AttackPattern rootCapec){
-		//serch if the CAPEC in the canfollow field exist in the identifiedCapec. If it exists then update the nodes and edges
+
+	public String generateAttachGraphFromCAPEC(AttackPattern rootCapec){
+		//search if the CAPEC in the canfollow field exist in the identifiedCapec. If it exists then update the nodes and edges
 		for (int i = 0; i <rootCapec.related_Attack_Patterns.related_Attack_Pattern.size() ; i++) {
 			if(rootCapec.related_Attack_Patterns.related_Attack_Pattern.get(i).nature.equals("CanPrecede")){
-				//add the capec id to the nodes and and update the edges accordingly
+				//add the capec id to the nodes and update the edges accordingly
 			}
 		}
 
-
+		return "attackgraph";
 	}
 
 }
