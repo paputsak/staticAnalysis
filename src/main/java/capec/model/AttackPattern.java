@@ -11,7 +11,7 @@ public class AttackPattern{
     @JsonProperty("-Status") 
     public String status;
     @JsonProperty("Description") 
-    public Object description;
+    public String description;
     @JsonProperty("Likelihood_Of_Attack") 
     public String likelihood_Of_Attack;
     @JsonProperty("Typical_Severity") 

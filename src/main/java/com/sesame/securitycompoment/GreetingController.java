@@ -58,8 +58,6 @@ public class GreetingController {
 
 	@PostMapping(value = "/searchwithcve")
 	public String searchWithCve(@RequestBody String cveId) {
-		//public String capecInsert(@RequestBody String capecXML) {
-		//Generate the capec database (capecs) with the input from the capecXML array
 		//1) search all rvdvulnerabilities to find related list of cwe for the cve provided
 		//2) search capec based on the list of cwes to find the related list with capec ids
 		//capecs=cveId.attack_Pattern_Catalog.attack_Patterns;
@@ -72,7 +70,7 @@ public class GreetingController {
 
 			}
 		}
-		ArrayList<AttackPattern> capecFilteredArraylist = new ArrayList<>();
+		ArrayList<AttackPattern> capecsIdentified = new ArrayList<>();
 		//Iterate all cwe from previous result to find the capecs
 		for (int i = 0; i < cweFilteredArrayList.size(); i++) {
 			String tempCWE=cweFilteredArrayList.get(i).substring(4);//remove the first 4 charactes eg: "CWE-115" becomes "115"
@@ -84,15 +82,15 @@ public class GreetingController {
 				for (int k = 0; k <tempCapec.related_Weaknesses.related_Weakness.size() ; k++) {
 					RelatedWeakness tempRelatedWeakness=tempCapec.related_Weaknesses.related_Weakness.get(k);
 					if (tempRelatedWeakness.cWEID.equals(tempCWE)){
-						capecFilteredArraylist.add(tempCapec);
+						capecsIdentified.add(tempCapec);
 
 					}
 				}
 			}
 		}
 		System.out.println("The following CAPECs have been identified as potential attacks related to :" + cveId);
-		for (int i = 0; i < capecFilteredArraylist.size(); i++) {
-			System.out.print(" "+capecFilteredArraylist.get(i).iD);
+		for (int i = 0; i < capecsIdentified.size(); i++) {
+			System.out.print(" "+capecsIdentified.get(i).iD);
 
 		}
 		//System.out.println(capecs.attack_Pattern.get(0).related_Weaknesses.related_Weakness);
@@ -102,6 +100,16 @@ public class GreetingController {
 
 
 		return "rvdresult";
+	}
+	public void generateAttachGraphFromCAPEC(AttackPattern rootCapec){
+		//serch if the CAPEC in the canfollow field exist in the identifiedCapec. If it exists then update the nodes and edges
+		for (int i = 0; i <rootCapec.related_Attack_Patterns.related_Attack_Pattern.size() ; i++) {
+			if(rootCapec.related_Attack_Patterns.related_Attack_Pattern.get(i).nature.equals("CanPrecede")){
+				//add the capec id to the nodes and and update the edges accordingly
+			}
+		}
+
+
 	}
 
 }
