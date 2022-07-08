@@ -3,6 +3,7 @@ package com.sesame.securitycompoment;
 import capec.model.AttackPattern;
 import capec.model.AttackPatterns;
 import capec.model.Capec;
+import graph.model.Graph;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import rvd.model.RvdVulnerability;
@@ -35,8 +36,18 @@ public class SecurityComponentApplication {
 			" \\____/ \\___/ \\_|  |_/\\_|     \\___/ \\_| \\_/\\____/ \\_| \\_/  \\_/  \n" +
 			"                                                                \n" +
 			"                                                                ";
+	// all the vulnerabilities of the RVD repository
 	public static ArrayList<RvdVulnerability> rvdVulnerabilities;
+
+	// all the Attack Patterns of the CAPEC repository
 	public static ArrayList<AttackPattern> capecs;
+
+	// all the identified Attack Patterns for a given CVE-ID
+	public static ArrayList<AttackPattern> capecsIdentified;
+
+	// this is the array of graphs (=attack trees) created due to the
+	// canFollow relationship among Attack Patterns
+	public static ArrayList<Graph> canFollowGraphs;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SecurityComponentApplication.class, args);
