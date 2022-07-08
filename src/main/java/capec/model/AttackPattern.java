@@ -1,6 +1,5 @@
 package capec.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class AttackPattern{
     @JsonProperty("-ID") 
     public String iD;
@@ -11,7 +10,7 @@ public class AttackPattern{
     @JsonProperty("-Status") 
     public String status;
     @JsonProperty("Description") 
-    public String description;
+    public Object description;
     @JsonProperty("Likelihood_Of_Attack") 
     public String likelihood_Of_Attack;
     @JsonProperty("Typical_Severity") 

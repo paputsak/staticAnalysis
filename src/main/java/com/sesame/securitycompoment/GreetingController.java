@@ -18,6 +18,8 @@ import static com.sesame.securitycompoment.SecurityComponentApplication.*;
 
 @Controller
 public class GreetingController {
+	 ArrayList<Node> nodes = new ArrayList<>();
+	ArrayList<Edge> edges = new ArrayList<>();
 
 	/*@GetMapping("/greeting")
 	public String greetingForm(Model model) {
@@ -57,7 +59,8 @@ public class GreetingController {
 		node.setId("6");
 		node.setLabel("ManosManos");
 		model.addAttribute("node", node);
-		return "attackgraph";
+		model.addAttribute("nodes", nodes);
+		return "attackgraph2";
 	}
 
 
@@ -116,18 +119,30 @@ public class GreetingController {
 			}
 		}
 		System.out.println("The following CAPECs have been identified as potential attacks related to :" + cveId);
-		for (int i = 0; i < capecsIdentified.size(); i++) {
-			System.out.print(" "+capecsIdentified.get(i).iD);
+//		for (int i = 0; i < capecsIdentified.size(); i++) {
+//			System.out.print(" "+capecsIdentified.get(i).iD);
+//
+//		}
+
+
+		//dummy test
+		for (int i = 0; i <capecs.size() ; i++) {
+			if(capecs.get(i).iD.equals("643")){
+				test(capecs.get(i));
+				break;
+			}
 
 		}
+
+
 		//System.out.println(capecs.attack_Pattern.get(0).related_Weaknesses.related_Weakness);
 		return "rvdresult";
 	}
 
 
 	public void test(AttackPattern attackPattern) {
-		ArrayList<Node> nodes = new ArrayList<>();
-		ArrayList<Edge> edges = new ArrayList<>();
+//		ArrayList<Node> nodes = new ArrayList<>();
+//		ArrayList<Edge> edges = new ArrayList<>();
 
 		Node rootNode = new Node();
 		rootNode.setId(attackPattern.iD);
@@ -136,42 +151,68 @@ public class GreetingController {
 		rootNode.setColor("red");
 		nodes.add(rootNode);
 
-		int currentIndex = 0;
+		int currentIndex = -1;
 		int remainingIndex = 0;
 
-		while (remainingIndex>0 && nodes.size()>currentIndex+1) {
+		//while (remainingIndex>0 && nodes.size()>currentIndex+1) {
+		while (nodes.size()>currentIndex+1) {
+			currentIndex++;
+			Node tempRootNode = new Node();
+			tempRootNode=nodes.get(currentIndex);
 
 			// move to the next item of nodes table
-			// nodes.get(currentIndex);
+			//nodes.get(currentIndex);
 
 			// find the Attack Pattern instance (from the identified attack patterns)
 			// that corresponds to the nodes.get(currentIndex)
 			AttackPattern currentAttackPattern = new AttackPattern();
-			for (int i = 0; i < capecsIdentified.size(); i++) {
+			/*for (int i = 0; i < capecsIdentified.size(); i++) {
 				if (capecsIdentified.get(i).iD.equals(nodes.get(currentIndex).getLabel())) {
 					currentAttackPattern = capecsIdentified.get(i);
 				}
+			}*/
+			for (int i = 0; i < capecs.size(); i++) {
+				if (capecs.get(i).iD.equals(nodes.get(currentIndex).getLabel())) {
+					currentAttackPattern = capecs.get(i);
+				}
 			}
 
+
+
+			try{
+
+
 			for (int i = 0; i < currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.size(); i++) {
-				if (currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).equals("CanPrecede")) {
+				if (currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).nature.equals("CanPrecede")) {
 					Node node = new Node();
 					node.setId(currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).cAPECID);
 					node.setLabel(currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).cAPECID);
 					node.setShape("box");
 					node.setColor("red");
 					nodes.add(node);
-					remainingIndex++;
+					//remainingIndex++;
 
 					Edge edge = new Edge();
-					edge.setFrom(Integer.parseInt(rootNode.getId()));
+					edge.setFrom(Integer.parseInt(tempRootNode.getId()));
 					edge.setTo(Integer.parseInt(node.getId()));
 					edge.setWidth(3);
 					edges.add(edge);
 				}
 			}
-			remainingIndex--;
-			currentIndex++;
+			//remainingIndex--;
+			}catch (NullPointerException e){
+				System.out.println(e.getMessage());
+			}
+		}
+
+
+
+		for (int i = 0; i <nodes.size() ; i++) {
+			System.out.println("Nodes "+nodes.get(i).getId());
+		}
+		for (int i = 0; i <edges.size() ; i++) {
+			System.out.println("From " + edges.get(i).getFrom() + " to " + edges.get(i).getTo());
+
 		}
 	}
 

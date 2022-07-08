@@ -1,6 +1,5 @@
 package capec.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class AttackPatternCatalog{
     @JsonProperty("-xmlns") 
     public String xmlns;

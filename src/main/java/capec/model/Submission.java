@@ -1,6 +1,5 @@
 package capec.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Submission{
     @JsonProperty("Submission_Name") 
     public String submission_Name;

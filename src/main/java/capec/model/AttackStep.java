@@ -1,6 +1,5 @@
 package capec.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class AttackStep{
     @JsonProperty("Step") 
     public String step;
