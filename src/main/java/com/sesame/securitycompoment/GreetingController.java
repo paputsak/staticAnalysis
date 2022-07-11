@@ -60,6 +60,7 @@ public class GreetingController {
 		node.setLabel("ManosManos");
 		model.addAttribute("node", node);
 		model.addAttribute("nodes", nodes);
+		model.addAttribute("edges", edges);
 		return "attackgraph2";
 	}
 
