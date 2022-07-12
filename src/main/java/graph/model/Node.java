@@ -3,16 +3,16 @@ package graph.model;
 //{ id: 1, label: "Robot crashes with a person", shape: "box", color: "#f7e39c" },
 
 public class Node {
-    private String id;
+    private int id;
     private String label;
     private String shape;
     private String color;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

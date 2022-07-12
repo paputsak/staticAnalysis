@@ -24,31 +24,13 @@
 
 <script th:inline="javascript" type="text/javascript">
 
+    // put the Nodes and Edges arraylists in variables
+    var nodesList = [[${nodes}]];
+    var edgesList = [[${edges}]];
+    //console.log("date: "+ nodes[0].label);  //  I  got undefined
 
-var nodes = [[${nodes}]];
-var edges = [[${edges}]];
-
-
-    console.log("date: "+ nodes[0].label);  //  I  got undefined
-
-
-    // create an array with nodes
-    var nodes = new vis.DataSet([
-        { id: 1, label: "Robot crashes with a person", shape: "box", color: "#f7e39c" },
-        { id: 2, label: "Attacker pupblishes \narbitary data to a topic", shape: "box", color: "#f7e39c" },
-        { id: 3, label: "OR", color: "#f7e39c" },
-        { id: 4, label: "Attacker uses ROS CLI", shape: "box", color: "#f7e39c" },
-        { id: 5, label: "Compromizes API", shape: "box", color: "#f7e39c" },
-        { id: 6, label: [[${nodes[0].label}]] }
-    ]);
-
-    // create an array with edges
-    var edges = new vis.DataSet([
-        { from: 1, to: 2, width: 3 },
-        { from: 2, to: 3, width: 3 },
-        { from: 3, to: 4, width: 3 },
-        { from: 3, to: 5, width: 3 }
-    ]);
+    var nodes = new vis.DataSet(nodesList);
+    var edges = new vis.DataSet(edgesList);
 
     // create a network
     var container = document.getElementById("mynetwork");
@@ -65,7 +47,7 @@ var edges = [[${edges}]];
             },
         },
         edges: {
-            arrows: "from"
+            arrows: "to"
         },
     };
     var network = new vis.Network(container, data, options);

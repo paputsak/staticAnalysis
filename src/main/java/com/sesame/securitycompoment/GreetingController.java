@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import rvd.model.RvdVulnerability;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 import static com.sesame.securitycompoment.SecurityComponentApplication.*;
 
 @Controller
 public class GreetingController {
-	 ArrayList<Node> nodes = new ArrayList<>();
+	ArrayList<Node> nodes = new ArrayList<>();
 	ArrayList<Edge> edges = new ArrayList<>();
 
 	/*@GetMapping("/greeting")
@@ -56,7 +58,7 @@ public class GreetingController {
 	@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 		Node node = new Node();
-		node.setId("6");
+		node.setId(6);
 		node.setLabel("ManosManos");
 		model.addAttribute("node", node);
 		model.addAttribute("nodes", nodes);
@@ -93,6 +95,7 @@ public class GreetingController {
 		//2) search capec based on the list of cwes to find the related list with capec ids
 		//capecs=cveId.attack_Pattern_Catalog.attack_Patterns;
 
+		// search all rvdVulnerabilities to find related list of cwe for the cve provided
 		ArrayList<String> cweFilteredArrayList = new ArrayList<>();
 		for (int i = 0; i <rvdVulnerabilities.size() ; i++) {
 
@@ -101,13 +104,10 @@ public class GreetingController {
 
 			}
 		}
-		//ArrayList<AttackPattern> capecsIdentified = new ArrayList<>();
+
 		//Iterate all cwe from previous result to find the capecs
 		for (int i = 0; i < cweFilteredArrayList.size(); i++) {
 			String tempCWE=cweFilteredArrayList.get(i).substring(4);//remove the first 4 charactes eg: "CWE-115" becomes "115"
-			//String tempCWE=cweFilteredArrayList.get(i);
-
-
 			for (int j = 0; j <capecs.size() ; j++) {
 				AttackPattern tempCapec = capecs.get(j);
 				for (int k = 0; k <tempCapec.related_Weaknesses.related_Weakness.size() ; k++) {
@@ -119,11 +119,13 @@ public class GreetingController {
 				}
 			}
 		}
+
+		/*// print the identified attacks
 		System.out.println("The following CAPECs have been identified as potential attacks related to :" + cveId);
-//		for (int i = 0; i < capecsIdentified.size(); i++) {
-//			System.out.print(" "+capecsIdentified.get(i).iD);
-//
-//		}
+		for (int i = 0; i < capecsIdentified.size(); i++) {
+			System.out.print(" "+capecsIdentified.get(i).iD);
+
+		}*/
 
 
 		//dummy test
@@ -140,29 +142,21 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
-
 	public void test(AttackPattern attackPattern) {
-//		ArrayList<Node> nodes = new ArrayList<>();
-//		ArrayList<Edge> edges = new ArrayList<>();
 
+		// create the root node in the Nodes arraylist
 		Node rootNode = new Node();
-		rootNode.setId(attackPattern.iD);
+		rootNode.setId(1);
 		rootNode.setLabel(attackPattern.iD);
 		rootNode.setShape("box");
-		rootNode.setColor("red");
+		rootNode.setColor("#f7e39c");
 		nodes.add(rootNode);
 
 		int currentIndex = -1;
-		int remainingIndex = 0;
-
-		//while (remainingIndex>0 && nodes.size()>currentIndex+1) {
 		while (nodes.size()>currentIndex+1) {
 			currentIndex++;
 			Node tempRootNode = new Node();
 			tempRootNode=nodes.get(currentIndex);
-
-			// move to the next item of nodes table
-			//nodes.get(currentIndex);
 
 			// find the Attack Pattern instance (from the identified attack patterns)
 			// that corresponds to the nodes.get(currentIndex)
@@ -178,117 +172,38 @@ public class GreetingController {
 				}
 			}
 
-
-
+			// for every canPrecede related attack pattern create a Node instance and an Edge instance
+			// at the corresponding arraylists
 			try{
+				for (int i = 0; i < currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.size(); i++) {
+					if (currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).nature.equals("CanPrecede")) {
+						Node node = new Node();
+						node.setId(nodes.size()+1);
+						node.setLabel(currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).cAPECID);
+						node.setShape("box");
+						node.setColor("#f7e39c");
+						nodes.add(node);
 
-
-			for (int i = 0; i < currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.size(); i++) {
-				if (currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).nature.equals("CanPrecede")) {
-					Node node = new Node();
-					node.setId(currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).cAPECID);
-					node.setLabel(currentAttackPattern.related_Attack_Patterns.related_Attack_Pattern.get(i).cAPECID);
-					node.setShape("box");
-					node.setColor("red");
-					nodes.add(node);
-					//remainingIndex++;
-
-					Edge edge = new Edge();
-					edge.setFrom(Integer.parseInt(tempRootNode.getId()));
-					edge.setTo(Integer.parseInt(node.getId()));
-					edge.setWidth(3);
-					edges.add(edge);
+						Edge edge = new Edge();
+						edge.setFrom(tempRootNode.getId());
+						edge.setTo(node.getId());
+						edge.setWidth(3);
+						edges.add(edge);
+					}
 				}
 			}
-			//remainingIndex--;
-			}catch (NullPointerException e){
+			catch (NullPointerException e){
 				System.out.println(e.getMessage());
 			}
 		}
 
-
-
+		// print the Nodes adn Edges that have been created
 		for (int i = 0; i <nodes.size() ; i++) {
 			System.out.println("Nodes "+nodes.get(i).getId());
 		}
 		for (int i = 0; i <edges.size() ; i++) {
 			System.out.println("From " + edges.get(i).getFrom() + " to " + edges.get(i).getTo());
-
 		}
-	}
-
-
-	public String generateCanFollowAttachGraph(AttackPattern attackPattern) {
-
-		// create the canFollowGraph
-		Graph canFollowGraph = new Graph();
-		ArrayList<Node> nodes = new ArrayList<>();
-		canFollowGraph.setNodes(nodes);
-		ArrayList<Edge> edges = new ArrayList<>();
-		canFollowGraph.setEdges(edges);
-
-		// create the root node of the graph
-		Node rootNode = new Node();
-		rootNode.setId("-1");
-		rootNode.setLabel(attackPattern.iD);
-		rootNode.setShape("box");
-		rootNode.setColor("red");
-		canFollowGraph.getNodes().add(rootNode);
-
-		// add nodes and edges based on the "CanPrecede" relationship of the corresponding Attack Patterns
-		int numberOfAddedNodes = 0;
-		String response = addNodeEdgeToAttachGraph(canFollowGraph);
-		while (response.contains("Node")) {
-			response = addNodeEdgeToAttachGraph(canFollowGraph);
-			numberOfAddedNodes++;
-		}
-
-		return numberOfAddedNodes + " Nodes were added to the canFollowGraph";
-	}
-
-	// this method adds a new node to the last node of a given canFollowGraph
-	// based on the "CanPrecede" relationship of the corresponding Attack Patterns
-	public String addNodeEdgeToAttachGraph(Graph canFollowGraph){
-
-		// this is the method response
-		String methodResponse = "";
-
-		// find the last node in the graph
-		Node startNode = canFollowGraph.getNodes().get(canFollowGraph.getNodes().size());
-
-		// find the Attack Pattern instance (from the identified attack patterns)
-		// that corresponds to the startNode.label
-		AttackPattern startAttackPattern = new AttackPattern();
-		for (int i = 0; i < capecsIdentified.size(); i++) {
-			if (capecsIdentified.get(i).iD.equals(startNode.getLabel())) {
-				startAttackPattern = capecsIdentified.get(i);
-			}
-		}
-
-		// find if this Attack Pattern has a "CanPrecede" relationship with another one.
-		ArrayList<RelatedAttackPattern> relatedAttackPatterns = startAttackPattern.related_Attack_Patterns.related_Attack_Pattern;
-		for (int i = 0; i <relatedAttackPatterns.size() ; i++) {
-			if(relatedAttackPatterns.get(i).nature.equals("CanPrecede")){
-				// create the corresponding node to be added in the canFollowGraph graph
-				Node node = new Node();
-				node.setId(String.valueOf(i));
-				node.setLabel(relatedAttackPatterns.get(i).cAPECID);
-				node.setShape("box");
-				node.setColor("#f7e39c");
-				canFollowGraph.getNodes().add(node);
-
-				// create the corresponding edge to be added in the canFollowGraph graph
-				Edge edge = new Edge();
-				edge.setFrom(Integer.parseInt(startNode.getId()));
-				edge.setTo(i);
-				edge.setWidth(3);
-				canFollowGraph.getEdges().add(edge);
-
-				// create the response
-				methodResponse = methodResponse.concat("Node " + relatedAttackPatterns.get(i).cAPECID + " and an Edge from " + Integer.parseInt(startNode.getId()) + " to " + i + " have been created. ");
-			}
-		}
-		return methodResponse;
 	}
 
 }

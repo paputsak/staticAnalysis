@@ -1,12 +1,12 @@
 package capec.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-public class RelatedAttackPattern{
-    @JsonProperty("-Nature") 
+
+public class RelatedAttackPattern {
+    @JsonProperty("-Nature")
     public String nature;
-    @JsonProperty("-CAPEC_ID") 
+    @JsonProperty("-CAPEC_ID")
     public String cAPECID;
-    @JsonProperty("-self-closing") 
+    @JsonProperty("-self-closing")
     public String selfClosing;
-    @JsonProperty("Exclude_Related") 
-    public Object exclude_Related;
 }
