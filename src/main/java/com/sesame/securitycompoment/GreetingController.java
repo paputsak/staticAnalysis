@@ -75,7 +75,7 @@ public class GreetingController {
 		//Generate the rvd database (rvdVulnerabilities) with the input from the rvdjson array
 		rvdVulnerabilities=rvdJson;
 
-		System.out.println("Local RVD Repository has been updated");
+		System.out.println("Local RVD Repository has been updated. " + rvdVulnerabilities.size() + " vulnerabilities have been stored.");
 		return "rvdresult";
 	}
 
@@ -85,7 +85,7 @@ public class GreetingController {
 		//Generate the capec database (capecs) with the input from the capecXML array
 		capecs=capecJson.attack_Pattern_Catalog.attack_Patterns.attack_Pattern;
 
-		System.out.println("Local CAPEC repository has been updated");
+		System.out.println("Local CAPEC Repository has been updated. " + capecs.size() + " known attacks have been stored.");
 		return "rvdresult";
 	}
 
@@ -142,7 +142,74 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
-	public void test(AttackPattern attackPattern) {
+	@PostMapping(value = "/searchwithcves")
+	public String searchWithCves(@RequestBody ArrayList<String> cveIds) {
+
+		// do for every incoming CVE-ID
+		for (int i = 0; i < cveIds.size(); i++) {
+
+			// Put in the "cweFilteredArrayList" the CWEs that are related
+			// to each of the CVE-IDs, searching the RVD Vulnerabilities
+			ArrayList<String> cweFilteredArrayList = new ArrayList<>();
+			for (int j = 0; j <rvdVulnerabilities.size() ; j++) {
+				if (rvdVulnerabilities.get(j).cve.equals(cveIds.get(i))){
+					cweFilteredArrayList.add(rvdVulnerabilities.get(j).cwe);
+				}
+			}
+			// print the "cweFilteredArrayList"
+			System.out.println(" ");
+			System.out.println("cweFilteredArrayList: ");
+			for (int j = 0; j < cweFilteredArrayList.size(); j++) {
+				System.out.println(cweFilteredArrayList.get(j));
+			}
+			System.out.println(" ");
+
+			// Put in the "capecsIdentified" list the CAPECs that are related
+			// to each of the CWEs identified above, searching the CAPEC repo
+			for (int j = 0; j < cweFilteredArrayList.size(); j++) {
+				//remove the first 4 charactes eg: "CWE-115" becomes "115"
+				String tempCWE=cweFilteredArrayList.get(i).substring(4);
+				for (int k = 0; k < capecs.size(); k++) {
+					AttackPattern tempCapec = capecs.get(j);
+					for (int l = 0; l < tempCapec.related_Weaknesses.related_Weakness.size(); l++) {
+						RelatedWeakness tempRelatedWeakness=tempCapec.related_Weaknesses.related_Weakness.get(k);
+						if (tempRelatedWeakness.cWEID.equals(tempCWE)){
+							capecsIdentified.add(tempCapec);
+						}
+					}
+				}
+			}
+
+		}
+
+		// print the list with the identified CAPECs
+		System.out.println(" ");
+		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
+		if (capecsIdentified.size()>0) {
+			for (int j = 0; j < capecsIdentified.size(); j++) {
+				System.out.print(" " + capecsIdentified.get(j).iD);
+			}
+		}
+		System.out.println(" ");
+
+		// Put in the "canFollowGraphs" list all the attack trees
+		// that are created based on the identified CAPECs
+		for (int i = 0; i < capecsIdentified.size(); i++) {
+			Graph graph = test(capecsIdentified.get(i));
+			canFollowGraphs.add(graph);
+		}
+		// print the "canFollowGraphs"
+		System.out.println(" ");
+		System.out.println("canFollowGraphs: ");
+		for (int i = 0; i < canFollowGraphs.size(); i++) {
+			System.out.println(canFollowGraphs.get(i));
+		}
+		System.out.println(" ");
+
+		return "rvdresult";
+	}
+
+	public Graph test(AttackPattern attackPattern) {
 
 		// create the root node in the Nodes arraylist
 		Node rootNode = new Node();
@@ -204,6 +271,12 @@ public class GreetingController {
 		for (int i = 0; i <edges.size() ; i++) {
 			System.out.println("From " + edges.get(i).getFrom() + " to " + edges.get(i).getTo());
 		}
+
+		// create the response and return it
+		Graph canFollowGraph = new Graph();
+		canFollowGraph.setNodes(nodes);
+		canFollowGraph.setEdges(edges);
+		return canFollowGraph;
 	}
 
 }
