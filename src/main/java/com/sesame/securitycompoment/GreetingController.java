@@ -7,16 +7,19 @@ import capec.model.RelatedWeakness;
 import graph.model.Edge;
 import graph.model.Graph;
 import graph.model.Node;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import rvd.model.RvdVulnerability;
+import xml.model.report;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 import static com.sesame.securitycompoment.SecurityComponentApplication.*;
+import static org.springframework.http.MediaType.APPLICATION_XML;
 
 @Controller
 public class GreetingController {
@@ -142,6 +145,69 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
+	// not tested!
+	@PostMapping(value = "/searchwithcpes")
+	public String searchWithCpes(@RequestBody ArrayList<String> cpes) {
+
+		// do for every incoming CPE
+		for (int i = 0; i < cpes.size(); i++) {
+			String currentCpe = cpes.get(i);
+
+			// Put in the "cweFilteredArrayList" the CWEs that are related
+			// to each of the CPEs, searching the RVD Vulnerabilities
+			ArrayList<String> cweFilteredArrayList = new ArrayList<>();
+
+			// for every RVD vulnerability
+			for (int j = 0; j < rvdVulnerabilities.size(); j++) {
+				// check the ... elements
+				RvdVulnerability currentVuln = rvdVulnerabilities.get(j);
+				if (currentVuln.title.contains(currentCpe) ||
+						currentVuln.description.contains(currentCpe) ||
+						currentVuln.system.contains(currentCpe) ||
+						currentVuln.vendor.contains(currentCpe)) {
+					cweFilteredArrayList.add(currentVuln.cwe);
+				}
+			}
+
+/*			// print the "cweFilteredArrayList"
+			System.out.println(" ");
+			System.out.println("cweFilteredArrayList: ");
+			for (int j = 0; j < cweFilteredArrayList.size(); j++) {
+				System.out.println(cweFilteredArrayList.get(j));
+			}
+			System.out.println(" ");*/
+
+			// Put in the "capecsIdentified" list the CAPECs that are related
+			// to each of the CWEs identified above, searching the CAPEC repo
+			for (int j = 0; j < cweFilteredArrayList.size(); j++) {
+				//remove the first 4 charactes eg: "CWE-115" becomes "115"
+				String tempCWE=cweFilteredArrayList.get(i).substring(4);
+				for (int k = 0; k < capecs.size(); k++) {
+					AttackPattern tempCapec = capecs.get(j);
+					for (int l = 0; l < tempCapec.related_Weaknesses.related_Weakness.size(); l++) {
+						RelatedWeakness tempRelatedWeakness=tempCapec.related_Weaknesses.related_Weakness.get(k);
+						if (tempRelatedWeakness.cWEID.equals(tempCWE)){
+							capecsIdentified.add(tempCapec);
+						}
+					}
+				}
+			}
+		}
+
+		// print the list with the identified CAPECs
+		System.out.println(" ");
+		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
+		if (capecsIdentified.size()>0) {
+			for (int j = 0; j < capecsIdentified.size(); j++) {
+				System.out.print(" " + capecsIdentified.get(j).iD);
+			}
+		}
+		System.out.println(" ");
+
+		return "rvdresult";
+	}
+
+	// not tested !
 	@PostMapping(value = "/searchwithcves")
 	public String searchWithCves(@RequestBody ArrayList<String> cveIds) {
 
@@ -277,6 +343,14 @@ public class GreetingController {
 		canFollowGraph.setNodes(nodes);
 		canFollowGraph.setEdges(edges);
 		return canFollowGraph;
+	}
+
+
+	@PostMapping(value = "/openvasreportinsert", consumes = {"text/xml"})
+	public String openvasReportInsert(@RequestBody report reportXml) {
+
+		System.out.println("openVAS report has been stored. ");
+		return "rvdresult";
 	}
 
 }
