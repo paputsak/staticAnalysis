@@ -7,6 +7,7 @@ public class Node {
     private String label;
     private String shape;
     private String color;
+    private String image = "";
 
     public int getId() {
         return id;
@@ -38,5 +39,13 @@ public class Node {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

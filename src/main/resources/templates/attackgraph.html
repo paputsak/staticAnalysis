@@ -30,8 +30,8 @@ var nodeLabel = [[${node.label}]];
     // create an array with nodes
     var nodes = new vis.DataSet([
         { id: 0, label: [[${node.label}]] },
-        { id: 1, label: "Robot crashes with a person", shape: "box", color: "#f7e39c" },
-        { id: 2, label: "Attacker pupblishes \narbitary data to a topic", shape: "box", color: "#f7e39c" },
+        { id: 1, label: "Robot crashes with a person", shape: "image", image: "https://www.freeiconspng.com/uploads/letter-b-icon-png-23.png", color: "#f7e39c" },
+        { id: 2, label: "Attacker pupblishes \narbitary data to a topic", shape: "box", image: "", color: "#f7e39c" },
         { id: 3, label: "OR", color: "#f7e39c" },
         { id: 4, label: "Attacker uses ROS CLI", shape: "box", color: "#f7e39c" },
         { id: 5, label: "Compromizes API", shape: "box", color: "#f7e39c" }
@@ -39,7 +39,7 @@ var nodeLabel = [[${node.label}]];
 
     // create an array with edges
     var edges = new vis.DataSet([
-        { from: 1, to: 2, width: 3 },
+        { from: 1, to: 2, width: 3, color: "blue" },
         { from: 2, to: 3, width: 3 },
         { from: 3, to: 4, width: 3 },
         { from: 3, to: 5, width: 3 }

@@ -1,5 +1,8 @@
 package com.sesame.securitycompoment;
 
+import canprecede.model.CanPrecedeNode2;
+import canprecede.model.CanPrecedeTree;
+import canprecede.model.CanPrecedeTree2;
 import capec.model.AttackPattern;
 import capec.model.AttackPatterns;
 import capec.model.Capec;
@@ -42,8 +45,18 @@ public class SecurityComponentApplication {
 	// all the Attack Patterns of the CAPEC repository
 	public static ArrayList<AttackPattern> capecs;
 
+	// all the trees created based on the canPrecede relationship among Attack Patterns
+	public static ArrayList<CanPrecedeTree> canPrecedeTrees;
+
 	// all the identified Attack Patterns for a given CVE-ID
-	public static ArrayList<AttackPattern> capecsIdentified;
+	public static ArrayList<AttackPattern> capecsIdentified = new ArrayList<>();
+
+	// a list with all available Template attack trees
+	public static CanPrecedeTree2 allTemplateAttackTrees = new CanPrecedeTree2();
+
+	// this is the array of graphs (=attack trees) created due to the
+	// canPrecede relationship among Attack Patterns
+	public static ArrayList<Graph> canPrecedeGraphs;
 
 	// this is the array of graphs (=attack trees) created due to the
 	// canFollow relationship among Attack Patterns

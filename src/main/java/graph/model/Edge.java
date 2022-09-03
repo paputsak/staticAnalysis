@@ -6,6 +6,7 @@ public class Edge {
     private int from;
     private int to;
     private int width;
+    private String color;
 
     public int getFrom() {
         return from;
@@ -29,5 +30,13 @@ public class Edge {
 
     public void setWidth(int width) {
         this.width = width;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
