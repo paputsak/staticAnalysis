@@ -72,9 +72,9 @@ public class GreetingController {
 	public String attackgraph(Model model) {
 
 		Node node = new Node();
-		node.setId(9);
+		/*node.setId(9);
 		node.setLabel("ManosManos");
-		model.addAttribute("node", node);
+		model.addAttribute("node", node)*/;
 		model.addAttribute("nodes", nodes);
 		model.addAttribute("edges", edges);
 		return "attackgraph2";
@@ -769,28 +769,35 @@ public class GreetingController {
 		Node node = new Node();
 		node.setId(currentNode.getId());
 		node.setLabel(currentNode.getData());
+		node.setWidthConstraint(100);
+		node.setHeightConstraint(100);
+		node.setBorderWidth(0);
+		node.setFont("14px arial white");
+		node.setShape("box");
+
 		switch (currentNode.getNodeType()) {
 			case GATE:
+				node.setShape("image");
+				node.setLabel("");
 				if (currentNode.getData().equals("AND")) {
-					node.setShape("image");
-					node.setImage("/images/andGate.png");
+					node.setImage("/images/andGate4.png");
 					node.setColor("#A7BED3");
 				} else {
-					node.setShape("image");
-					node.setImage("/images/orGate.png");
+					node.setImage("/images/orGate4.png");
 					node.setColor("#A7BED3");
 				}
 				break;
 			case CAPEC:
-				node.setShape("box");
-				node.setColor("#C6E2E9");
+				node.setColor("#EE9B00");
 				break;
 			case STATE:
-				node.setShape("box");
-				node.setColor("#F1FFC4");
+				if (currentNode.getParentId()==0) {
+					node.setColor("#9B2226");
+				} else {
+					node.setColor("#E07102");
+				}
 				break;
 			default:
-				node.setShape("box");
 				node.setColor("#f7e39c");
 		}
 		nodes.add(node);
@@ -798,8 +805,8 @@ public class GreetingController {
 		Edge edge = new Edge();
 		edge.setFrom(currentNode.getParentId());
 		edge.setTo(node.getId());
-		edge.setColor("#FFCAAF");
-		edge.setWidth(3);
+		edge.setColor("#0A9396");
+		edge.setWidth(4);
 		edges.add(edge);
 
 		System.out.println("node: " + node.getLabel());

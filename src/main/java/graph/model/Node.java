@@ -9,6 +9,11 @@ public class Node {
     private String color;
     private String image = "";
 
+    private int widthConstraint;
+    private int heightConstraint;
+    private int borderWidth;
+    private String font;
+
     public int getId() {
         return id;
     }
@@ -47,5 +52,48 @@ public class Node {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getWidthConstraint() {
+        return widthConstraint;
+    }
+
+    public void setWidthConstraint(int widthConstraint) {
+        this.widthConstraint = widthConstraint;
+    }
+
+    public int getHeightConstraint() {
+        return heightConstraint;
+    }
+
+    public void setHeightConstraint(int heightConstraint) {
+        this.heightConstraint = heightConstraint;
+    }
+
+    public int getBorderWidth() {
+        return borderWidth;
+    }
+
+    public void setBorderWidth(int boarderWidth) {
+        this.borderWidth = boarderWidth;
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "id=" + id +
+                ", label='" + label + '\'' +
+                ", shape='" + shape + '\'' +
+                ", color='" + color + '\'' +
+                ", image='" + image + '\'' +
+                '}';
     }
 }
