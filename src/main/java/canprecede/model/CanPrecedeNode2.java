@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class CanPrecedeNode2 {
     private int id;
     private String data;
+    private String extendedDescription;
     private int parentId;
     private ArrayList<CanPrecedeNode2> children = new ArrayList<>();
     public enum Type {CAPEC, STATE, GATE}
@@ -54,11 +55,20 @@ public class CanPrecedeNode2 {
         this.nodeType = nodeType;
     }
 
+    public String getExtendedDescription() {
+        return extendedDescription;
+    }
+
+    public void setExtendedDescription(String extendedDescription) {
+        this.extendedDescription = extendedDescription;
+    }
+
     @Override
     public String toString() {
         return "CanPrecedeNode2{" +
                 "id=" + id +
                 ", data='" + data + '\'' +
+                ", extendedDescription='" + extendedDescription + '\'' +
                 ", parentId=" + parentId +
                 ", children=" + children +
                 ", nodeType=" + nodeType +

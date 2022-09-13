@@ -56,7 +56,7 @@ public class SecurityComponentApplication {
 
 	// this is the array of graphs (=attack trees) created due to the
 	// canPrecede relationship among Attack Patterns
-	public static ArrayList<Graph> canPrecedeGraphs;
+	public static CanPrecedeTree2 canPrecedeGraphs = new CanPrecedeTree2();
 
 	// this is the array of graphs (=attack trees) created due to the
 	// canFollow relationship among Attack Patterns

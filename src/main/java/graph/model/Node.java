@@ -4,6 +4,7 @@ package graph.model;
 
 public class Node {
     private int id;
+    private String extendedDescription;
     private String label;
     private String shape;
     private String color;
@@ -86,14 +87,27 @@ public class Node {
         this.font = font;
     }
 
+    public String getExtendedDescription() {
+        return extendedDescription;
+    }
+
+    public void setExtendedDescription(String extendedDescription) {
+        this.extendedDescription = extendedDescription;
+    }
+
     @Override
     public String toString() {
         return "Node{" +
                 "id=" + id +
+                ", extendedDescription='" + extendedDescription + '\'' +
                 ", label='" + label + '\'' +
                 ", shape='" + shape + '\'' +
                 ", color='" + color + '\'' +
                 ", image='" + image + '\'' +
+                ", widthConstraint=" + widthConstraint +
+                ", heightConstraint=" + heightConstraint +
+                ", borderWidth=" + borderWidth +
+                ", font='" + font + '\'' +
                 '}';
     }
 }

@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 import static com.sesame.securitycompoment.SecurityComponentApplication.*;
-import static com.sesame.securitycompoment.SecurityComponentApplication.capecsIdentified;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
 @Controller
@@ -71,12 +70,13 @@ public class GreetingController {
 	@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 
-		Node node = new Node();
-		/*node.setId(9);
+		/*Node node = new Node();
+		node.setId(9);
 		node.setLabel("ManosManos");
 		model.addAttribute("node", node)*/;
 		model.addAttribute("nodes", nodes);
 		model.addAttribute("edges", edges);
+		model.addAttribute("trees", canPrecedeGraphs.getNodes());
 		return "attackgraph2";
 	}
 
@@ -504,6 +504,45 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
+	// fill capecsIdentified list with predefined CAPECs
+	@PostMapping(value = "/fillCapecsIdentifiedList")
+	public String fillCapecsIdentifiedList(@RequestBody ArrayList<String> capecIds) {
+
+		// clean the list
+		capecsIdentified.clear();
+
+		// Put in the "capecsIdentified" list the CAPECs that are included in capecIds list
+		for (String s : capecIds) {
+			for (AttackPattern tempCapec : capecs) {
+				if (tempCapec.iD.equals(s)) {
+					capecsIdentified.add(tempCapec);
+					break;
+				}
+			}
+		}
+
+		// print the list with the identified CAPECs
+		System.out.println(" ");
+		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
+		if (capecsIdentified.size()>0) {
+			for (AttackPattern attackPattern : capecsIdentified) {
+				System.out.print(" " + attackPattern.iD);
+			}
+		}
+		System.out.println(" ");
+		System.out.println("The predefined capecsIdentified is created");
+		System.out.println(" ");
+
+		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
+		// and depict the matched Template attack trees
+		visualizeAttackTrees(getMatchingTemplateTrees());
+
+		return "rvdresult";
+	}
+
+
+	// ************************************************ (start) Template Attack trees ************************************************
+
 	// Creates a Template attack tree where the root attack is to cause a crash between a robot and a person
 	@GetMapping("/templateTree")
 	public String createRobotCrashesWithPersonTemplateAttackTree () {
@@ -512,13 +551,13 @@ public class GreetingController {
 		CanPrecedeNode2 capec85 = new CanPrecedeNode2();
 		capec85.setId(11);
 		capec85.setParentId(12);
-		capec85.setData("CAPEC-85: AJAX Footprinting.");
+		capec85.setData("CAPEC-85");
 		capec85.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 capec63 = new CanPrecedeNode2();
 		capec63.setId(12);
 		capec63.setParentId(14);
-		capec63.setData("CAPEC-63: Cross-Site Scripting (XSS).");
+		capec63.setData("CAPEC-63");
 		capec63.setNodeType(CanPrecedeNode2.Type.CAPEC);
 		capec63.setChild(capec85);
 
@@ -526,7 +565,7 @@ public class GreetingController {
 		capec8.setId(13);
 		capec8.setParentId(14);
 		//capec8.setData("CAPEC-8: Buffer overflow in an API call.");
-		capec8.setData("8");
+		capec8.setData("CAPEC-8");
 		capec8.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
@@ -591,14 +630,14 @@ public class GreetingController {
 		CanPrecedeNode2 capec9 = new CanPrecedeNode2();
 		capec9.setId(22);
 		capec9.setParentId(24);
-		capec9.setData("9");
+		capec9.setData("CAPEC-9");
 		capec9.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 capec8 = new CanPrecedeNode2();
 		capec8.setId(23);
 		capec8.setParentId(24);
 		//capec8.setData("CAPEC-8: Buffer overflow in an API call.");
-		capec8.setData("8");
+		capec8.setData("CAPEC-8");
 		capec8.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 andGate = new CanPrecedeNode2();
@@ -654,6 +693,334 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
+	// create a Template Attack tree for KIOS #1
+	@GetMapping("/kiosΤemplateTree1")
+	public String kiosTemplateAttackTree1 () {
+
+		// create the nodes
+		CanPrecedeNode2 capec75 = new CanPrecedeNode2();
+		capec75.setId(101);
+		capec75.setParentId(105);
+		capec75.setData("CAPEC-75");
+		capec75.setExtendedDescription("CAPEC-75: Manipulating Writeable Configuration Files.");
+		capec75.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec46 = new CanPrecedeNode2();
+		capec46.setId(102);
+		capec46.setParentId(105);
+		capec46.setData("CAPEC-46");
+		capec46.setExtendedDescription("CAPEC-46: Overflow Variables and Tags.");
+		capec46.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec35 = new CanPrecedeNode2();
+		capec35.setId(103);
+		capec35.setParentId(105);
+		capec35.setData("CAPEC-35");
+		capec35.setExtendedDescription("CAPEC-35: Leverage Executable Code in Non-Executable Files.");
+		capec35.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec23 = new CanPrecedeNode2();
+		capec23.setId(104);
+		capec23.setParentId(105);
+		capec23.setData("CAPEC-23");
+		capec23.setExtendedDescription("CAPEC-23: File Content Injection.");
+		capec23.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 orGate = new CanPrecedeNode2();
+		orGate.setId(105);
+		orGate.setParentId(106);
+		orGate.setData("OR");
+		orGate.setExtendedDescription("OR Gate");
+		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate.setChild(capec75);
+		orGate.setChild(capec46);
+		orGate.setChild(capec35);
+		orGate.setChild(capec23);
+
+		CanPrecedeNode2 manipulateConfigFiles = new CanPrecedeNode2();
+		manipulateConfigFiles.setId(106);
+		manipulateConfigFiles.setParentId(108);
+		manipulateConfigFiles.setData("Manipulate Configuration Files");
+		manipulateConfigFiles.setExtendedDescription("If a configuration file is not properly protected by the system access control, an attacker can write configuration information to alter input/output through system logs, database connections, malicious URLs and so on.");
+		manipulateConfigFiles.setNodeType(CanPrecedeNode2.Type.STATE);
+		manipulateConfigFiles.setChild(orGate);
+
+		CanPrecedeNode2 capec13 = new CanPrecedeNode2();
+		capec13.setId(107);
+		capec13.setParentId(108);
+		capec13.setData("CAPEC-13");
+		capec13.setExtendedDescription("CAPEC-13: Subverting Environment Variable Values.");
+		capec13.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
+		orGate2.setId(108);
+		orGate2.setParentId(109);
+		orGate2.setData("OR");
+		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate2.setChild(manipulateConfigFiles);
+		orGate2.setChild(capec13);
+
+		CanPrecedeNode2 changeUrlStream = new CanPrecedeNode2();
+		changeUrlStream.setId(109);
+		changeUrlStream.setParentId(110);
+		changeUrlStream.setData("Alter video stream URL");
+		changeUrlStream.setExtendedDescription("The Attacker alters the URL of the video stream which serves as input to the Video Web Streamer.");
+		changeUrlStream.setNodeType(CanPrecedeNode2.Type.STATE);
+		changeUrlStream.setChild(orGate2);
+
+		CanPrecedeNode2 consumeMaliciousSource = new CanPrecedeNode2();
+		consumeMaliciousSource.setId(110);
+		consumeMaliciousSource.setParentId(111);
+		consumeMaliciousSource.setData("Malicious source consumption");
+		consumeMaliciousSource.setExtendedDescription("Video Web Streamer consumes stream from the malicious source.");
+		consumeMaliciousSource.setNodeType(CanPrecedeNode2.Type.STATE);
+		consumeMaliciousSource.setChild(changeUrlStream);
+
+		CanPrecedeNode2 wrongAssessment = new CanPrecedeNode2();
+		wrongAssessment.setId(111);
+		wrongAssessment.setParentId(112);
+		wrongAssessment.setData("Mistaken assessment of the disaster scale");
+		wrongAssessment.setExtendedDescription("Aerial view from the malicious source leads to mistaken assessment of the disaster scale.");
+		wrongAssessment.setNodeType(CanPrecedeNode2.Type.STATE);
+		wrongAssessment.setChild(consumeMaliciousSource);
+
+		CanPrecedeNode2 insufficientOperationDesign = new CanPrecedeNode2();
+		insufficientOperationDesign.setId(112);
+		insufficientOperationDesign.setData("Insufficient design of mitigation actions");
+		insufficientOperationDesign.setExtendedDescription("Mistaken assessment of the disaster scale leads to insufficient design of the mitigation actions.");
+		insufficientOperationDesign.setNodeType(CanPrecedeNode2.Type.STATE);
+		insufficientOperationDesign.setChild(wrongAssessment);
+
+		// store the tree in a public variable
+		allTemplateAttackTrees.setNode(insufficientOperationDesign);
+
+		// print the tree
+		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
+			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
+			System.out.println("TemplateAttackTree: " + currentTemplateTree);
+		}
+		System.out.println(" ");
+
+		return "rvdresult";
+	}
+
+	// create a Template Attack tree for KIOS #1
+	@GetMapping("/kiosΤemplateTree2")
+	public String kiosTemplateAttackTree2 () {
+
+		// create the nodes
+		CanPrecedeNode2 capec488 = new CanPrecedeNode2();
+		capec488.setId(225);
+		capec488.setParentId(212);
+		capec488.setData("CAPEC-488");
+		capec488.setExtendedDescription("CAPEC-488: HTTP Flood.");
+		capec488.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec487 = new CanPrecedeNode2();
+		capec487.setId(224);
+		capec487.setParentId(212);
+		capec487.setData("CAPEC-487");
+		capec487.setExtendedDescription("CAPEC-487: ICMP Flood.");
+		capec487.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec486 = new CanPrecedeNode2();
+		capec486.setId(223);
+		capec486.setParentId(212);
+		capec486.setData("CAPEC-486");
+		capec486.setExtendedDescription("CAPEC-486: UDP Flood.");
+		capec486.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec482 = new CanPrecedeNode2();
+		capec482.setId(222);
+		capec482.setParentId(212);
+		capec482.setData("CAPEC-482");
+		capec482.setExtendedDescription("CAPEC-482: TCP Flood.");
+		capec482.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec628 = new CanPrecedeNode2();
+		capec628.setId(221);
+		capec628.setParentId(213);
+		capec628.setData("CAPEC-628");
+		capec628.setExtendedDescription("CAPEC-628: GPS Spoofing.");
+		capec628.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec173 = new CanPrecedeNode2();
+		capec173.setId(220);
+		capec173.setParentId(213);
+		capec173.setData("CAPEC-173");
+		capec173.setExtendedDescription("CAPEC-173: Action Spoofing.");
+		capec173.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec151 = new CanPrecedeNode2();
+		capec151.setId(219);
+		capec151.setParentId(213);
+		capec151.setData("CAPEC-151");
+		capec151.setExtendedDescription("CAPEC-151: Identity Spoofing.");
+		capec151.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec148 = new CanPrecedeNode2();
+		capec148.setId(218);
+		capec148.setParentId(213);
+		capec148.setData("CAPEC-148");
+		capec148.setExtendedDescription("CAPEC-148: Content Spoofing.");
+		capec148.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec67 = new CanPrecedeNode2();
+		capec67.setId(217);
+		capec67.setParentId(211);
+		capec67.setData("CAPEC-67");
+		capec67.setExtendedDescription("CAPEC-67: String Format Overflow in syslog().");
+		capec67.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec8 = new CanPrecedeNode2();
+		capec8.setId(216);
+		capec8.setParentId(211);
+		capec8.setData("CAPEC-8");
+		capec8.setExtendedDescription("CAPEC-8: Buffer overflow in an API Call.");
+		capec8.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec46 = new CanPrecedeNode2();
+		capec46.setId(215);
+		capec46.setParentId(211);
+		capec46.setData("CAPEC-46");
+		capec46.setExtendedDescription("CAPEC-46: Overflow Variables and Tags.");
+		capec46.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 capec45 = new CanPrecedeNode2();
+		capec45.setId(214);
+		capec45.setParentId(211);
+		capec45.setData("CAPEC-45");
+		capec45.setExtendedDescription("CAPEC-45: Buffer Overflow via Symbolic Links.");
+		capec45.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 orGate5 = new CanPrecedeNode2();
+		orGate5.setId(213);
+		orGate5.setParentId(210);
+		orGate5.setData("OR");
+		orGate5.setExtendedDescription("OR Gate");
+		orGate5.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate5.setChild(capec148);
+		orGate5.setChild(capec151);
+		orGate5.setChild(capec173);
+		orGate5.setChild(capec628);
+
+		CanPrecedeNode2 orGate4 = new CanPrecedeNode2();
+		orGate4.setId(212);
+		orGate4.setParentId(209);
+		orGate4.setData("OR");
+		orGate4.setExtendedDescription("OR Gate");
+		orGate4.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate4.setChild(capec482);
+		orGate4.setChild(capec486);
+		orGate4.setChild(capec487);
+		orGate4.setChild(capec488);
+
+		CanPrecedeNode2 orGate3 = new CanPrecedeNode2();
+		orGate3.setId(211);
+		orGate3.setParentId(208);
+		orGate3.setData("OR");
+		orGate3.setExtendedDescription("OR Gate");
+		orGate3.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate3.setChild(capec8);
+		orGate3.setChild(capec45);
+		orGate3.setChild(capec46);
+
+		CanPrecedeNode2 spoofing = new CanPrecedeNode2();
+		spoofing.setId(210);
+		spoofing.setParentId(207);
+		spoofing.setData("Spoofing");
+		spoofing.setExtendedDescription("Spoofing, as it pertains to cybersecurity, is when someone or something pretends to be something else in an attempt to gain our confidence, get access to our systems, steal data, steal money, or spread malware.");
+		spoofing.setNodeType(CanPrecedeNode2.Type.STATE);
+		spoofing.setChild(orGate5);
+
+		CanPrecedeNode2 flooding = new CanPrecedeNode2();
+		flooding.setId(209);
+		flooding.setParentId(207);
+		flooding.setData("Flooding");
+		flooding.setExtendedDescription("The intruder sends a high number of connection requests to the target node until resources of the target node are completely wasted.");
+		flooding.setNodeType(CanPrecedeNode2.Type.STATE);
+		flooding.setChild(orGate4);
+
+		CanPrecedeNode2 bufferOverflow = new CanPrecedeNode2();
+		bufferOverflow.setId(208);
+		bufferOverflow.setParentId(207);
+		bufferOverflow.setData("Buffer overflow");
+		bufferOverflow.setExtendedDescription("Buffer overflow occurs when the amount of data in the buffer exceeds its storage capacity.");
+		bufferOverflow.setNodeType(CanPrecedeNode2.Type.STATE);
+		bufferOverflow.setChild(orGate3);
+
+		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
+		orGate2.setId(207);
+		orGate2.setParentId(203);
+		orGate2.setData("OR");
+		orGate2.setExtendedDescription("OR Gate");
+		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate2.setChild(bufferOverflow);
+		orGate2.setChild(flooding);
+		orGate2.setChild(spoofing);
+
+		CanPrecedeNode2 capec604 = new CanPrecedeNode2();
+		capec604.setId(206);
+		capec604.setParentId(204);
+		capec604.setData("CAPEC-604");
+		capec604.setExtendedDescription("CAPEC-604: Wi-Fi Jamming.");
+		capec604.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 falsifyingCommands = new CanPrecedeNode2();
+		falsifyingCommands.setId(205);
+		falsifyingCommands.setParentId(202);
+		falsifyingCommands.setData("Falsifying Commands");
+		falsifyingCommands.setExtendedDescription("The Attacker alters the commands that GCS sends to the Drone.");
+		falsifyingCommands.setNodeType(CanPrecedeNode2.Type.STATE);
+
+		CanPrecedeNode2 jammingAttack = new CanPrecedeNode2();
+		jammingAttack.setId(204);
+		jammingAttack.setParentId(202);
+		jammingAttack.setData("Jamming attack");
+		jammingAttack.setExtendedDescription("The signal-to-noise ratio at the receiver side is decreases and the existing wireless communication is disrupted due to a Jamming attack.");
+		jammingAttack.setNodeType(CanPrecedeNode2.Type.STATE);
+		jammingAttack.setChild(capec604);
+
+		CanPrecedeNode2 dosAttack = new CanPrecedeNode2();
+		dosAttack.setId(203);
+		dosAttack.setParentId(202);
+		dosAttack.setData("DoS attack");
+		dosAttack.setExtendedDescription("A Denial-of-service attack is conducted against the target Drone.");
+		dosAttack.setNodeType(CanPrecedeNode2.Type.STATE);
+		dosAttack.setChild(orGate2);
+
+		CanPrecedeNode2 orGate = new CanPrecedeNode2();
+		orGate.setId(202);
+		orGate.setParentId(201);
+		orGate.setData("OR");
+		orGate.setExtendedDescription("OR Gate");
+		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
+		orGate.setChild(dosAttack);
+		orGate.setChild(jammingAttack);
+		orGate.setChild(falsifyingCommands);
+
+		CanPrecedeNode2 noDroneCommunication = new CanPrecedeNode2();
+		noDroneCommunication.setId(201);
+		noDroneCommunication.setData("Communication interruption with Drone");
+		noDroneCommunication.setExtendedDescription("Communication with the target Drone is lost.");
+		noDroneCommunication.setNodeType(CanPrecedeNode2.Type.STATE);
+		noDroneCommunication.setChild(orGate);
+
+		// store the tree in a public variable
+		allTemplateAttackTrees.setNode(noDroneCommunication);
+
+		// print the tree
+		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
+			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
+			System.out.println("TemplateAttackTree: " + currentTemplateTree);
+		}
+		System.out.println(" ");
+
+		return "rvdresult";
+	}
+
+	// ************************************************ (end) Template Attack trees ************************************************
+
 
 	// ******************************** (start) methods to select Template Attack trees ***********************************
 	// returns all the matched template trees
@@ -671,6 +1038,7 @@ public class GreetingController {
 			}
 		}
 
+		canPrecedeGraphs = matchingTrees;
 		return matchingTrees;
 	}
 
@@ -732,10 +1100,14 @@ public class GreetingController {
 
 	// checks if a given CAPEC belongs in the capecsIdentified list
 	public boolean checkCapec (String capec) {
+		// get only the number from the CAPEC ID
+		String justTheCapecNumber = capec.substring(capec.indexOf("-")+1);
+		//System.out.println("justTheCapecNumber " + justTheCapecNumber);
 
 		for (int i = 0; i < capecsIdentified.size(); i++) {
 			AttackPattern currentCapecIdentified = capecsIdentified.get(i);
-			if (currentCapecIdentified.iD.equals(capec)) {
+			//System.out.println("currentCapecIdentified.iD " + currentCapecIdentified.iD);
+			if (currentCapecIdentified.iD.equals(justTheCapecNumber)) {
 				System.out.println("CAPEC: " + capec + " is in the capecsIdentified list");
 				return true;
 			}
@@ -769,6 +1141,7 @@ public class GreetingController {
 		Node node = new Node();
 		node.setId(currentNode.getId());
 		node.setLabel(currentNode.getData());
+		node.setExtendedDescription(currentNode.getExtendedDescription());
 		node.setWidthConstraint(100);
 		node.setHeightConstraint(100);
 		node.setBorderWidth(0);

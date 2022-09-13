@@ -1,33 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+
 <head>
-    <title>Vis Network | Basic usage</title>
-
-    <script
-            type="text/javascript"
-            src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
-    ></script>
-
-    <style type="text/css">
-        #mynetwork {
-            width: 1024px;
-            height: 768px;
-            border: 1px solid lightgray;
-        }
-    </style>
+    <title>SESAME Security</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">#mynetwork {width: 1024px;height: 768px;border: 1px solid lightgray;}</style>
 </head>
-<body>
-<p>Create a simple network with some nodes and edges.</p>
 
-<div id="mynetwork"></div>
-<p id="selection">Selection: 3</p>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-7">
+            <h3>Attack tree depiction</h3>
+            <div id="mynetwork"></div>
+        </div>
+        <div class="col-sm-5">
+            <h3>Details</h3>
+            <p><b>Id: </b><div id="selection1"></div> </p>
+            <p><b>Title: </b><div id="selection2"></div> </p>
+            <p><b>Extended description: </b><div id="selection3"></div> </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-7">
+            <h3>Listbox</h3>
+                <select th:each="tree : ${trees}">
+                    <option th:text="${tree}"></option>
+                </select>
+        </div>
+    </div>
+</div>
 
 <script th:inline="javascript" type="text/javascript">
 
     // put the Nodes and Edges arraylists in variables
     var nodesList = [[${nodes}]];
     var edgesList = [[${edges}]];
-    //console.log("date: "+ nodes[0].label);  //  I  got undefined
 
     var nodes = new vis.DataSet(nodesList);
     var edges = new vis.DataSet(edgesList);
@@ -54,9 +68,17 @@
 
     // add event listeners
     network.on("select", function (params) {
-        document.getElementById("selection").innerText =
-            "Selection: " + params.nodes;
+
+        var tempSelectString = JSON.stringify(nodesList.filter(item => item.id === parseInt(params.nodes)));
+        const tempSelectObject = JSON.parse(tempSelectString);
+
+        document.getElementById("selection1").innerText = tempSelectObject[0].id;
+        document.getElementById("selection2").innerText = tempSelectObject[0].label;
+        document.getElementById("selection3").innerText = tempSelectObject[0].extendedDescription;
+
+
     });
 </script>
+
 </body>
 </html>
