@@ -37,6 +37,8 @@ public class GreetingController {
 	// create dummy TemplateTree
 	String str = createRobotCrashesWithPersonTemplateAttackTree();
 	String str2 = createRobotCrashesWithPersonTemplateAttackTree2();
+	String str3 = kiosTemplateAttackTree1();
+	String str4 = kiosTemplateAttackTree2();
 
 	@GetMapping("/greeting")
 	public String greetingForm(Model model) {
@@ -81,24 +83,6 @@ public class GreetingController {
 	@GetMapping("/attackTrees")
 	public String getAttackTrees(Model model) {
 
-/*		System.out.println();
-		System.out.println("Print nodes2: ");
-		System.out.println();
-		for (int i = 0; i < nodes2.size(); i++) {
-			for (int j = 0; j < nodes2.get(i).size(); j++) {
-				System.out.print(nodes2.get(i).get(j) + " ");
-			}
-			System.out.println();
-		}*/
-
-		/*if (!nodes2.isEmpty()) {
-			model.addAttribute("treeNodes1", nodes2.get(0));
-			model.addAttribute("treeEdges1", edges2.get(0));
-			model.addAttribute("treeNodes2", nodes2.get(1));
-			model.addAttribute("treeEdges2", edges2.get(1));
-			model.addAttribute("treeNodes3", nodes2.get(2));
-			model.addAttribute("treeEdges3", edges2.get(2));
-		}*/
 		model.addAttribute("nodes2", nodes2);
 		model.addAttribute("edges2", edges2);
 		//model.addAttribute("nodes", nodes);
@@ -112,10 +96,6 @@ public class GreetingController {
 	@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 
-		/*Node node = new Node();
-		node.setId(9);
-		node.setLabel("ManosManos");
-		model.addAttribute("node", node)*/;
 		model.addAttribute("nodes", nodes);
 		model.addAttribute("edges", edges);
 		model.addAttribute("trees", canPrecedeGraphs.getNodes());
@@ -563,7 +543,7 @@ public class GreetingController {
 			}
 		}
 
-		// print the list with the identified CAPECs
+		/*// print the list with the identified CAPECs
 		System.out.println(" ");
 		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
 		if (capecsIdentified.size()>0) {
@@ -573,7 +553,7 @@ public class GreetingController {
 		}
 		System.out.println(" ");
 		System.out.println("The predefined capecsIdentified is created");
-		System.out.println(" ");
+		System.out.println(" ");*/
 
 		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
 		// and depict the matched Template attack trees
@@ -591,62 +571,80 @@ public class GreetingController {
 
 		// create the nodes
 		CanPrecedeNode2 capec85 = new CanPrecedeNode2();
-		capec85.setId(11);
-		capec85.setParentId(12);
+		capec85.setId(301);
+		capec85.setParentId(303);
 		capec85.setData("CAPEC-85");
+		capec85.setExtendedDescription("CAPEC-85: AJAX Footprinting.");
 		capec85.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
-		CanPrecedeNode2 capec63 = new CanPrecedeNode2();
-		capec63.setId(12);
-		capec63.setParentId(14);
-		capec63.setData("CAPEC-63");
-		capec63.setNodeType(CanPrecedeNode2.Type.CAPEC);
-		capec63.setChild(capec85);
-
 		CanPrecedeNode2 capec8 = new CanPrecedeNode2();
-		capec8.setId(13);
-		capec8.setParentId(14);
-		//capec8.setData("CAPEC-8: Buffer overflow in an API call.");
+		capec8.setId(302);
+		capec8.setParentId(303);
 		capec8.setData("CAPEC-8");
+		capec8.setExtendedDescription("CAPEC-8: Buffer overflow in an API call.");
 		capec8.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
-		orGate.setId(14);
-		orGate.setParentId(15);
-		orGate.setData("OR");
+		orGate.setId(303);
+		orGate.setParentId(304);
+		orGate.setData("OR Gate");
+		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(capec8);
-		orGate.setChild(capec63);
+		orGate.setChild(capec85);
 
 		CanPrecedeNode2 compromiseApi = new CanPrecedeNode2();
-		compromiseApi.setId(15);
-		compromiseApi.setParentId(16);
-		compromiseApi.setData("Compromise the API of the robot.");
+		compromiseApi.setId(304);
+		compromiseApi.setParentId(308);
+		compromiseApi.setData("Compromise the API of the Drone");
+		compromiseApi.setExtendedDescription("Compromise the API of the Drone.");
 		compromiseApi.setNodeType(CanPrecedeNode2.Type.STATE);
 		compromiseApi.setChild(orGate);
 
-		/*CanPrecedeNode2 useRosCli = new CanPrecedeNode2();
-		useRosCli.setData("The Attacker uses ROS CLI.");
-		useRosCli.setGate(false);*/
+		CanPrecedeNode2 capec94 = new CanPrecedeNode2();
+		capec94.setId(305);
+		capec94.setParentId(306);
+		capec94.setData("CAPEC-94");
+		capec94.setExtendedDescription("CAPEC-94: Adversary in the Middle (AiTM).");
+		capec94.setNodeType(CanPrecedeNode2.Type.CAPEC);
+
+		CanPrecedeNode2 compromiseDrone = new CanPrecedeNode2();
+		compromiseDrone.setId(306);
+		compromiseDrone.setParentId(307);
+		compromiseDrone.setData("Compromise machine inside the target network");
+		compromiseDrone.setExtendedDescription("The Attacker takes control of one of the Drones or other machines inside the target network.");
+		compromiseDrone.setNodeType(CanPrecedeNode2.Type.STATE);
+		compromiseDrone.setChild(capec94);
+
+		CanPrecedeNode2 useRosCli = new CanPrecedeNode2();
+		useRosCli.setId(307);
+		useRosCli.setParentId(308);
+		useRosCli.setData("Use ROS CLI");
+		useRosCli.setExtendedDescription("The Attacker uses ROS CLI.");
+		useRosCli.setNodeType(CanPrecedeNode2.Type.STATE);
+		useRosCli.setChild(compromiseDrone);
 
 		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
-		orGate2.setId(16);
-		orGate2.setParentId(17);
-		orGate2.setData("OR");
+		orGate2.setId(308);
+		orGate2.setParentId(309);
+		orGate2.setData("OR Gate");
+		orGate2.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
-		//orGate2.setChild(useRosCli);
+		orGate2.setChild(useRosCli);
 		orGate2.setChild(compromiseApi);
 
 		CanPrecedeNode2 publishArbitraryData = new CanPrecedeNode2();
-		publishArbitraryData.setId(17);
-		publishArbitraryData.setParentId(18);
-		publishArbitraryData.setData("The Attacker publishes arbitrary data to a topic.");
+		publishArbitraryData.setId(309);
+		publishArbitraryData.setParentId(310);
+		publishArbitraryData.setData("Publish arbitrary data to a topic");
+		publishArbitraryData.setExtendedDescription("The Attacker publishes arbitrary data to a topic.");
 		publishArbitraryData.setNodeType(CanPrecedeNode2.Type.STATE);
 		publishArbitraryData.setChild(orGate2);
 
 		CanPrecedeNode2 robotCrashesWithPerson = new CanPrecedeNode2();
-		robotCrashesWithPerson.setId(18);
-		robotCrashesWithPerson.setData("The robot crashes with a person.");
+		robotCrashesWithPerson.setId(310);
+		robotCrashesWithPerson.setData("Drone crashes");
+		robotCrashesWithPerson.setExtendedDescription("The original navigation commands do not reach the Drone, which crashes.");
 		robotCrashesWithPerson.setNodeType(CanPrecedeNode2.Type.STATE);
 		robotCrashesWithPerson.setChild(publishArbitraryData);
 
@@ -669,26 +667,26 @@ public class GreetingController {
 	public String createRobotCrashesWithPersonTemplateAttackTree2 () {
 
 		// create the nodes
-		CanPrecedeNode2 capec9 = new CanPrecedeNode2();
-		capec9.setId(22);
-		capec9.setParentId(24);
-		capec9.setData("CAPEC-9");
-		capec9.setNodeType(CanPrecedeNode2.Type.CAPEC);
+		CanPrecedeNode2 capec700 = new CanPrecedeNode2();
+        capec700.setId(22);
+        capec700.setParentId(24);
+        capec700.setData("CAPEC-700");
+        capec700.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
-		CanPrecedeNode2 capec8 = new CanPrecedeNode2();
-		capec8.setId(23);
-		capec8.setParentId(24);
+		CanPrecedeNode2 capec701 = new CanPrecedeNode2();
+        capec701.setId(23);
+        capec701.setParentId(24);
 		//capec8.setData("CAPEC-8: Buffer overflow in an API call.");
-		capec8.setData("CAPEC-8");
-		capec8.setNodeType(CanPrecedeNode2.Type.CAPEC);
+        capec701.setData("CAPEC-701");
+        capec701.setNodeType(CanPrecedeNode2.Type.CAPEC);
 
 		CanPrecedeNode2 andGate = new CanPrecedeNode2();
 		andGate.setId(24);
 		andGate.setParentId(25);
 		andGate.setData("AND");
 		andGate.setNodeType(CanPrecedeNode2.Type.GATE);
-		andGate.setChild(capec8);
-		andGate.setChild(capec9);
+		andGate.setChild(capec701);
+		andGate.setChild(capec700);
 
 		CanPrecedeNode2 compromiseApi = new CanPrecedeNode2();
 		compromiseApi.setId(25);
@@ -771,8 +769,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
 		orGate.setId(105);
 		orGate.setParentId(106);
-		orGate.setData("OR");
-		orGate.setExtendedDescription("OR Gate");
+		orGate.setData("OR Gate");
+		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(capec75);
 		orGate.setChild(capec46);
@@ -938,8 +936,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate5 = new CanPrecedeNode2();
 		orGate5.setId(213);
 		orGate5.setParentId(210);
-		orGate5.setData("OR");
-		orGate5.setExtendedDescription("OR Gate");
+		orGate5.setData("OR Gate");
+		orGate5.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate5.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate5.setChild(capec148);
 		orGate5.setChild(capec151);
@@ -949,8 +947,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate4 = new CanPrecedeNode2();
 		orGate4.setId(212);
 		orGate4.setParentId(209);
-		orGate4.setData("OR");
-		orGate4.setExtendedDescription("OR Gate");
+		orGate4.setData("OR Gate");
+		orGate4.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate4.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate4.setChild(capec482);
 		orGate4.setChild(capec486);
@@ -960,8 +958,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate3 = new CanPrecedeNode2();
 		orGate3.setId(211);
 		orGate3.setParentId(208);
-		orGate3.setData("OR");
-		orGate3.setExtendedDescription("OR Gate");
+		orGate3.setData("OR Gate");
+		orGate3.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate3.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate3.setChild(capec8);
 		orGate3.setChild(capec45);
@@ -994,8 +992,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
 		orGate2.setId(207);
 		orGate2.setParentId(203);
-		orGate2.setData("OR");
-		orGate2.setExtendedDescription("OR Gate");
+		orGate2.setData("OR Gate");
+		orGate2.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate2.setChild(bufferOverflow);
 		orGate2.setChild(flooding);
@@ -1034,8 +1032,8 @@ public class GreetingController {
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
 		orGate.setId(202);
 		orGate.setParentId(201);
-		orGate.setData("OR");
-		orGate.setExtendedDescription("OR Gate");
+		orGate.setData("OR Gate");
+		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(dosAttack);
 		orGate.setChild(jammingAttack);
@@ -1069,18 +1067,30 @@ public class GreetingController {
 	public CanPrecedeTree2 getMatchingTemplateTrees () {
 		CanPrecedeTree2 matchingTrees = new CanPrecedeTree2();
 
+		//
+        System.out.println(" ");
+		System.out.println("Find matching Attack-tree templates based on identified CAPECs...");
+        System.out.println(" ");
+
 		// check all the available template attack trees
+		int matchedTemplates = 0;
 		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
 			if (checkLeavesFromCanPrecedeNode2(currentTemplateTree)) {
 				matchingTrees.setNode(currentTemplateTree);
 				System.out.println("Attack tree with root \"" + currentTemplateTree.getData() + "\" is a potential attack tree for the target system.");
+                System.out.println(" ");
+				matchedTemplates++;
 			} else {
 				System.out.println("Attack tree with root \"" + currentTemplateTree.getData() + "\" is NOT a potential attack tree for the target system.");
+                System.out.println(" ");
 			}
 		}
 
-		canPrecedeGraphs = matchingTrees;
+		System.out.println(matchedTemplates + " Attack-tree Templates have been found.");
+        System.out.println(" ");
+
+        canPrecedeGraphs = matchingTrees;
 		return matchingTrees;
 	}
 
@@ -1150,11 +1160,11 @@ public class GreetingController {
 			AttackPattern currentCapecIdentified = capecsIdentified.get(i);
 			//System.out.println("currentCapecIdentified.iD " + currentCapecIdentified.iD);
 			if (currentCapecIdentified.iD.equals(justTheCapecNumber)) {
-				System.out.println("CAPEC: " + capec + " is in the capecsIdentified list");
+				System.out.println(capec + " is in the capecsIdentified list");
 				return true;
 			}
 		}
-		System.out.println("CAPEC: " + capec + " is in NOT the capecsIdentified list");
+		System.out.println(capec + " is NOT in the capecsIdentified list");
 		return false;
 	}
 	// ******************************** (end) methods to select Template Attack trees *************************************
@@ -1172,13 +1182,13 @@ public class GreetingController {
 			createNodesEdges(i, currentTree);
 		}
 
-		// print the Nodes and Edges that have been created
+		/*// print the Nodes and Edges that have been created
 		for (int i = 0; i <nodes.size() ; i++) {
 			System.out.println("Nodes "+nodes.get(i).getId());
 		}
 		for (int i = 0; i <edges.size() ; i++) {
 			System.out.println("From " + edges.get(i).getFrom() + " to " + edges.get(i).getTo());
-		}
+		}*/
 
 	}
 
@@ -1230,8 +1240,8 @@ public class GreetingController {
 		edges.add(edge);
 		edges2.get(index).add(edge);
 
-		System.out.println("node: " + node.getLabel());
-		System.out.println("edge: " + edge.getFrom() + " - " + edge.getTo());
+		/*System.out.println("node: " + node.getLabel());
+		System.out.println("edge: " + edge.getFrom() + " - " + edge.getTo());*/
 
 		if (currentNode.getChildren().size() > 0) {
 			for (int i = 0; i < currentNode.getChildren().size(); i++) {
@@ -1433,13 +1443,13 @@ public class GreetingController {
 			}
 		}
 
-		// print the Nodes adn Edges that have been created
+		/*// print the Nodes adn Edges that have been created
 		for (int i = 0; i <nodes.size() ; i++) {
 			System.out.println("Nodes "+nodes.get(i).getId());
 		}
 		for (int i = 0; i <edges.size() ; i++) {
 			System.out.println("From " + edges.get(i).getFrom() + " to " + edges.get(i).getTo());
-		}
+		}*/
 
 		// create the response and return it
 		Graph canFollowGraph = new Graph();
