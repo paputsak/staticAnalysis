@@ -16,10 +16,12 @@
 
 <div class="container-fluid">
     <div class="row">
+        <!--show the selected tree -->
         <div class="col-sm-7">
             <h3>Attack tree depiction</h3>
             <div id="mynetwork"></div>
         </div>
+        <!--show details of the selected tree node -->
         <div class="col-sm-5">
             <h3>Details</h3>
             <p><b>Id: </b><div id="selection1"></div> </p>
@@ -28,21 +30,22 @@
         </div>
     </div>
     <div class="row">
+        <!--show the list of the matched attack trees -->
         <div class="col-sm-7">
             <h3>Listbox</h3>
                 <select th:each="tree : ${trees}">
-                    <option th:text="${tree}"></option>
+                    <option th:text="${tree.data}"></option>
                 </select>
         </div>
     </div>
 </div>
 
+<!--script for showing the matched trees and details of the selected tree node-->
 <script th:inline="javascript" type="text/javascript">
 
     // put the Nodes and Edges arraylists in variables
     var nodesList = [[${nodes}]];
     var edgesList = [[${edges}]];
-
     var nodes = new vis.DataSet(nodesList);
     var edges = new vis.DataSet(edgesList);
 
@@ -66,17 +69,14 @@
     };
     var network = new vis.Network(container, data, options);
 
-    // add event listeners
+    // show details of the selected tree node
     network.on("select", function (params) {
-
         var tempSelectString = JSON.stringify(nodesList.filter(item => item.id === parseInt(params.nodes)));
         const tempSelectObject = JSON.parse(tempSelectString);
 
         document.getElementById("selection1").innerText = tempSelectObject[0].id;
         document.getElementById("selection2").innerText = tempSelectObject[0].label;
         document.getElementById("selection3").innerText = tempSelectObject[0].extendedDescription;
-
-
     });
 </script>
 

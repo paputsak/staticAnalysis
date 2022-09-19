@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SESAME Security</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style type="text/css">#attackTree {width: 800px;height: 600px;border: 1px solid lightgray;}</style>
+
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row justify-content-left">
+        <div class="col-md-7">
+            <h3>Attack tree depiction</h3>
+            <div id="attackTree"></div>
+        </div>
+        <div class="col-md-5">
+            <div class="row">
+                <h3>Listbox</h3>
+                <select id="matchedTreeList" onChange="update()" size="10" style="width: 600px">
+                    <option th:each="tree, iStat : ${trees}" th:text="${tree.data}" th:value="${iStat.count}"></option>
+                </select>
+            </div>
+            <div class="row">
+                <h3>Details</h3>
+                <table class="table table-bordered" style="width: 600px">
+                    <thead>
+                    <tr class="success">
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Extended description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><div id="selection1"></div>
+                        <td><div id="selection2"></div></td>
+                        <td><div id="selection3"></div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    var network;
+
+    // set container
+    var container = document.getElementById("attackTree");
+
+    // set data
+    var nodesList = [[${nodes2}]];
+    var edgesList = [[${edges2}]];
+
+    // set data
+    var nodesTree = nodesList[0];
+    var edgesTree = edgesList[0];
+    var nodes = new vis.DataSet(nodesTree);
+    var edges = new vis.DataSet(edgesTree);
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+
+    //set options
+    var options = {
+        layout: {
+            hierarchical: {
+                direction: "UD",
+                sortMethod: "directed"
+            },
+        },
+        edges: {
+            arrows: "from"
+        },
+    };
+
+    initNetwork();
+
+    function update() {
+        var select = document.getElementById("matchedTreeList");
+        var option = select.options[select.selectedIndex];
+        console.log(option.value);
+
+        nodesTree = nodesList[option.value-1];
+        edgesTree = edgesList[option.value-1];
+        nodes = new vis.DataSet(nodesTree);
+        edges = new vis.DataSet(edgesTree);
+        data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        //network = new vis.Network(container, data, options);
+        initNetwork();
+    }
+
+    function initNetwork() {
+        network = new vis.Network(container, data, options);
+
+        // show details of the selected tree node
+        network.on("select", function (params) {
+            var tempSelectString = JSON.stringify(nodesTree.filter(item => item.id === parseInt(params.nodes)));
+            const tempSelectObject = JSON.parse(tempSelectString);
+
+            document.getElementById("selection1").innerText = tempSelectObject[0].id;
+            document.getElementById("selection2").innerText = tempSelectObject[0].label;
+            document.getElementById("selection3").innerText = tempSelectObject[0].extendedDescription;
+        });
+    }
+
+</script>
+</body>
+
+
+</html>

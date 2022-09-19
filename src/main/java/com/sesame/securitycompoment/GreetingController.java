@@ -31,16 +31,20 @@ public class GreetingController {
 	ArrayList<Node> nodes = new ArrayList<>();
 	ArrayList<Edge> edges = new ArrayList<>();
 
+	ArrayList<ArrayList<Node>> nodes2 = new ArrayList<ArrayList<Node>>();
+	ArrayList<ArrayList<Edge>> edges2 = new ArrayList<ArrayList<Edge>>();
+
 	// create dummy TemplateTree
 	String str = createRobotCrashesWithPersonTemplateAttackTree();
 	String str2 = createRobotCrashesWithPersonTemplateAttackTree2();
 
-	/*@GetMapping("/greeting")
+	@GetMapping("/greeting")
 	public String greetingForm(Model model) {
 		model.addAttribute("greeting", new Greeting());
 		return "greeting";
 	}
 
+	/*
 	@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 		model.addAttribute("attackgraph");
@@ -60,12 +64,50 @@ public class GreetingController {
 		return "result";
 	}*/
 
+	@RequestMapping("")
+	public String loadContent() {
+		return "website";
+	}
+
+
 	@PostMapping("/greeting")
 	public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
 		model.addAttribute("greeting", greeting);
 		return "result";
 	}
 
+	//////////////////////////////////////////////////// start test //////////////////////////////////
+
+	@GetMapping("/attackTrees")
+	public String getAttackTrees(Model model) {
+
+/*		System.out.println();
+		System.out.println("Print nodes2: ");
+		System.out.println();
+		for (int i = 0; i < nodes2.size(); i++) {
+			for (int j = 0; j < nodes2.get(i).size(); j++) {
+				System.out.print(nodes2.get(i).get(j) + " ");
+			}
+			System.out.println();
+		}*/
+
+		/*if (!nodes2.isEmpty()) {
+			model.addAttribute("treeNodes1", nodes2.get(0));
+			model.addAttribute("treeEdges1", edges2.get(0));
+			model.addAttribute("treeNodes2", nodes2.get(1));
+			model.addAttribute("treeEdges2", edges2.get(1));
+			model.addAttribute("treeNodes3", nodes2.get(2));
+			model.addAttribute("treeEdges3", edges2.get(2));
+		}*/
+		model.addAttribute("nodes2", nodes2);
+		model.addAttribute("edges2", edges2);
+		//model.addAttribute("nodes", nodes);
+		//model.addAttribute("edges", edges);
+		model.addAttribute("trees", canPrecedeGraphs.getNodes());
+		return "attackTrees";
+	}
+
+	//////////////////////////////////////////////////// end test ////////////////////////////////////
 
 	@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
@@ -1123,7 +1165,11 @@ public class GreetingController {
 			CanPrecedeNode2 currentTree = trees.getNodes().get(i);
 
 			// create a node and an edge for all the nodes of the tree
-			createNodesEdges(currentTree);
+			ArrayList<Node> tempNodes = new ArrayList<>();
+			nodes2.add(tempNodes);
+			ArrayList<Edge> tempEdges = new ArrayList<>();
+			edges2.add(tempEdges);
+			createNodesEdges(i, currentTree);
 		}
 
 		// print the Nodes and Edges that have been created
@@ -1136,7 +1182,7 @@ public class GreetingController {
 
 	}
 
-	public void createNodesEdges(CanPrecedeNode2 currentNode) {
+	public void createNodesEdges(int index, CanPrecedeNode2 currentNode) {
 
 		Node node = new Node();
 		node.setId(currentNode.getId());
@@ -1174,6 +1220,7 @@ public class GreetingController {
 				node.setColor("#f7e39c");
 		}
 		nodes.add(node);
+		nodes2.get(index).add(node);
 
 		Edge edge = new Edge();
 		edge.setFrom(currentNode.getParentId());
@@ -1181,6 +1228,7 @@ public class GreetingController {
 		edge.setColor("#0A9396");
 		edge.setWidth(4);
 		edges.add(edge);
+		edges2.get(index).add(edge);
 
 		System.out.println("node: " + node.getLabel());
 		System.out.println("edge: " + edge.getFrom() + " - " + edge.getTo());
@@ -1188,7 +1236,7 @@ public class GreetingController {
 		if (currentNode.getChildren().size() > 0) {
 			for (int i = 0; i < currentNode.getChildren().size(); i++) {
 				CanPrecedeNode2 currentChild = currentNode.getChildren().get(i);
-				createNodesEdges(currentChild);
+				createNodesEdges(index, currentChild);
 			}
 		} else {
 
