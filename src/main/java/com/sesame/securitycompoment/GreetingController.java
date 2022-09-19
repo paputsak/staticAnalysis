@@ -651,12 +651,12 @@ public class GreetingController {
 		// store the tree in a public variable
 		allTemplateAttackTrees.setNode(robotCrashesWithPerson);
 
-		// print the tree
+		/*// print the tree
 		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
 			System.out.println("TemplateAttackTree: " + currentTemplateTree);
 		}
-		System.out.println(" ");
+		System.out.println(" ");*/
 
 		return "rvdresult";
 	}
@@ -723,12 +723,12 @@ public class GreetingController {
 		// store the tree in a public variable
 		allTemplateAttackTrees.setNode(robotCrashesWithPerson);
 
-		// print the tree
+		/*// print the tree
 		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
 			System.out.println("TemplateAttackTree: " + currentTemplateTree);
 		}
-		System.out.println(" ");
+		System.out.println(" ");*/
 
 		return "rvdresult";
 	}
@@ -834,12 +834,12 @@ public class GreetingController {
 		// store the tree in a public variable
 		allTemplateAttackTrees.setNode(insufficientOperationDesign);
 
-		// print the tree
+		/*// print the tree
 		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
 			System.out.println("TemplateAttackTree: " + currentTemplateTree);
 		}
-		System.out.println(" ");
+		System.out.println(" ");*/
 
 		return "rvdresult";
 	}
@@ -1049,12 +1049,12 @@ public class GreetingController {
 		// store the tree in a public variable
 		allTemplateAttackTrees.setNode(noDroneCommunication);
 
-		// print the tree
+		/*// print the tree
 		for (int i = 0; i < allTemplateAttackTrees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTemplateTree = allTemplateAttackTrees.getNodes().get(i);
 			System.out.println("TemplateAttackTree: " + currentTemplateTree);
 		}
-		System.out.println(" ");
+		System.out.println(" ");*/
 
 		return "rvdresult";
 	}
@@ -1197,6 +1197,7 @@ public class GreetingController {
 		Node node = new Node();
 		node.setId(currentNode.getId());
 		node.setLabel(currentNode.getData());
+		node.setTitle(currentNode.getData());
 		node.setExtendedDescription(currentNode.getExtendedDescription());
 		node.setWidthConstraint(100);
 		node.setHeightConstraint(100);
@@ -1207,6 +1208,7 @@ public class GreetingController {
 		switch (currentNode.getNodeType()) {
 			case GATE:
 				node.setShape("image");
+				node.setTitle(currentNode.getData());
 				node.setLabel("");
 				if (currentNode.getData().equals("AND")) {
 					node.setImage("/images/andGate4.png");

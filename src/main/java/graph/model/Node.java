@@ -6,6 +6,7 @@ public class Node {
     private int id;
     private String extendedDescription;
     private String label;
+    private String title;
     private String shape;
     private String color;
     private String image = "";
@@ -93,6 +94,14 @@ public class Node {
 
     public void setExtendedDescription(String extendedDescription) {
         this.extendedDescription = extendedDescription;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override

@@ -14,20 +14,20 @@
 <body>
 
 <div class="container-fluid">
-    <div class="row justify-content-left">
-        <div class="col-md-7">
-            <h3>Attack tree depiction</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Attack Tree Visualization</h3>
             <div id="attackTree"></div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="row">
-                <h3>Listbox</h3>
+                <h3>List of Attack Trees</h3>
                 <select id="matchedTreeList" onChange="update()" size="10" style="width: 600px">
                     <option th:each="tree, iStat : ${trees}" th:text="${tree.data}" th:value="${iStat.count}"></option>
                 </select>
             </div>
             <div class="row">
-                <h3>Details</h3>
+                <h3>Node Details</h3>
                 <table class="table table-bordered" style="width: 600px">
                     <thead>
                     <tr class="success">
@@ -75,7 +75,8 @@
         layout: {
             hierarchical: {
                 direction: "UD",
-                sortMethod: "directed"
+                sortMethod: "directed",
+                levelSeparation: 200
             },
         },
         edges: {
@@ -112,7 +113,7 @@
             const tempSelectObject = JSON.parse(tempSelectString);
 
             document.getElementById("selection1").innerText = tempSelectObject[0].id;
-            document.getElementById("selection2").innerText = tempSelectObject[0].label;
+            document.getElementById("selection2").innerText = tempSelectObject[0].title;
             document.getElementById("selection3").innerText = tempSelectObject[0].extendedDescription;
         });
     }
