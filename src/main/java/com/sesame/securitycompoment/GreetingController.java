@@ -34,7 +34,7 @@ public class GreetingController {
 	ArrayList<ArrayList<Node>> nodes2 = new ArrayList<ArrayList<Node>>();
 	ArrayList<ArrayList<Edge>> edges2 = new ArrayList<ArrayList<Edge>>();
 
-	// create dummy TemplateTree
+	// create 4 TemplateTrees
 	String str = createRobotCrashesWithPersonTemplateAttackTree();
 	String str2 = createRobotCrashesWithPersonTemplateAttackTree2();
 	String str3 = kiosTemplateAttackTree1();
@@ -78,33 +78,23 @@ public class GreetingController {
 		return "result";
 	}
 
-	//////////////////////////////////////////////////// start test //////////////////////////////////
-
+	// API for visualization the selected Attack Trees
 	@GetMapping("/attackTrees")
 	public String getAttackTrees(Model model) {
-
 		model.addAttribute("nodes2", nodes2);
 		model.addAttribute("edges2", edges2);
-		//model.addAttribute("nodes", nodes);
-		//model.addAttribute("edges", edges);
 		model.addAttribute("trees", canPrecedeGraphs.getNodes());
 		return "attackTrees";
 	}
 
-	//////////////////////////////////////////////////// end test ////////////////////////////////////
-
-	@GetMapping("/attackgraph")
+	/*@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 
 		model.addAttribute("nodes", nodes);
 		model.addAttribute("edges", edges);
 		model.addAttribute("trees", canPrecedeGraphs.getNodes());
 		return "attackgraph2";
-	}
-
-
-
-	///////////////////////////////////////////////////////////////////////////////////////
+	}*/
 
 	// API for inserting all RVD vulnerabilities into the local repo
 	@PostMapping("/rvdinsert")
@@ -138,6 +128,148 @@ public class GreetingController {
 		}*/
 
 		//createCanPrecedeNode2s2();
+
+		return "rvdresult";
+	}
+
+	// API for identifying a list of CAPECs based on a given list of CPEs
+	@PostMapping(value = "/searchwithcpes")
+	public String searchWithCpes(@RequestBody ArrayList<String> cpes) {
+
+		// This list stores all the identified potential known attacks
+		//ArrayList<AttackPattern> capecsIdentified = new ArrayList<>();
+
+		// do for every incoming CPE
+		for (String currentCpe : cpes) {
+			// get every separate word from the CPE
+			String[] currentCpeArr = currentCpe.split(" ");
+			String[] commonWords = {"server", "Components", "FTP"};
+			ArrayList<String> currentCpeArrList = new ArrayList<>();
+			Collections.addAll(currentCpeArrList, currentCpeArr);
+			ArrayList<String> commonWordsArrList = new ArrayList<>();
+			Collections.addAll(commonWordsArrList, commonWords);
+
+			// remove the common words from the CPE words
+			currentCpeArrList.removeAll(commonWordsArrList);
+
+			// Put in the "cweFilteredArrayList" the CWEs that are related
+			// to each of the CPEs, searching the RVD Vulnerabilities
+			ArrayList<String> cweFilteredArrayList = new ArrayList<>();
+			// for every separate word of the CPE
+			for (String value : currentCpeArrList) {
+				//System.out.println("current CPE: " + value);
+
+				// for every RVD vulnerability
+				for (RvdVulnerability currentVuln : rvdVulnerabilities) {
+					// check the title, description, system and vendor elements
+					boolean titleFlag = false;
+					if (currentVuln.title != null) {
+						if (currentVuln.title.contains(value)) {
+							titleFlag = true;
+						}
+					}
+					boolean descriptionFlag = false;
+					if (currentVuln.description != null) {
+						if (currentVuln.description.contains(value)) {
+							descriptionFlag = true;
+						}
+					}
+					boolean systemFlag = false;
+					if (currentVuln.system != null) {
+						if (currentVuln.system.contains(value)) {
+							systemFlag = true;
+						}
+					}
+					boolean vendorFlag = false;
+					if (currentVuln.vendor != null) {
+						if (currentVuln.vendor.contains(value)) {
+							vendorFlag = true;
+						}
+					}
+					if (titleFlag || descriptionFlag || systemFlag || vendorFlag) {
+						cweFilteredArrayList.add(currentVuln.cwe);
+						//System.out.println("current CVE: " + currentVuln.cve);
+					}
+				}
+			}
+
+			/*// print the "cweFilteredArrayList"
+			System.out.println(" ");
+			System.out.println("cweFilteredArrayList: ");
+			for (String s : cweFilteredArrayList) {
+				System.out.println(s);
+			}
+			System.out.println(" ");*/
+
+			// Put in the "capecsIdentified" list the CAPECs that are related
+			// to each of the CWEs identified above, searching the CAPEC repo
+			for (String s : cweFilteredArrayList) {
+				//remove the first 4 charactes eg: "CWE-115" becomes "115"
+				String tempCWE = s.substring(4);
+				for (AttackPattern tempCapec : capecs) {
+					if (tempCapec.related_Weaknesses != null) {
+						for (int l = 0; l < tempCapec.related_Weaknesses.related_Weakness.size(); l++) {
+							RelatedWeakness tempRelatedWeakness = tempCapec.related_Weaknesses.related_Weakness.get(l);
+							if (tempRelatedWeakness.cWEID.equals(tempCWE)) {
+								capecsIdentified.add(tempCapec);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// print the list with the identified CAPECs
+		System.out.println(" ");
+		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
+		if (capecsIdentified.size()>0) {
+			for (AttackPattern attackPattern : capecsIdentified) {
+				System.out.print(" " + attackPattern.iD);
+			}
+		}
+		System.out.println(" ");
+		System.out.println("capecsIdentified.size= " + capecsIdentified.size());
+		System.out.println(" ");
+
+		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
+		// and depict the matched Template attack trees
+		visualizeAttackTrees(getMatchingTemplateTrees());
+
+		return "rvdresult";
+	}
+
+	// API for filling the capecsIdentified list with predefined CAPECs
+	@PostMapping(value = "/fillCapecsIdentifiedList")
+	public String fillCapecsIdentifiedList(@RequestBody ArrayList<String> capecIds) {
+
+		// clean the list
+		capecsIdentified.clear();
+
+		// Put in the "capecsIdentified" list the CAPECs that are included in capecIds list
+		for (String s : capecIds) {
+			for (AttackPattern tempCapec : capecs) {
+				if (tempCapec.iD.equals(s)) {
+					capecsIdentified.add(tempCapec);
+					break;
+				}
+			}
+		}
+
+		/*// print the list with the identified CAPECs
+		System.out.println(" ");
+		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
+		if (capecsIdentified.size()>0) {
+			for (AttackPattern attackPattern : capecsIdentified) {
+				System.out.print(" " + attackPattern.iD);
+			}
+		}
+		System.out.println(" ");
+		System.out.println("The predefined capecsIdentified is created");
+		System.out.println(" ");*/
+
+		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
+		// and depict the matched Template attack trees
+		visualizeAttackTrees(getMatchingTemplateTrees());
 
 		return "rvdresult";
 	}
@@ -244,6 +376,7 @@ public class GreetingController {
 	// ******************************** (end) methods to create the canPrecedeTrees2 *************************************
 
 	// ******************************** (start) methods to create the canPrecedeTrees *************************************
+	// ******************************** methods in this section are deprecated *************************************
 	// Creates lists of CAPEC IDs based on the canPrecede relationship
 	public ArrayList<ArrayList<String>> createCanPrecedeLists () {
 
@@ -420,152 +553,8 @@ public class GreetingController {
 	}
 	// ******************************** (end) methods to create the canPrecede trees *************************************
 
-	// API for identifying a list of CAPECs based on a given list of CPEs
-	@PostMapping(value = "/searchwithcpes")
-	public String searchWithCpes(@RequestBody ArrayList<String> cpes) {
-
-		// This list stores all the identified potential known attacks
-		//ArrayList<AttackPattern> capecsIdentified = new ArrayList<>();
-
-		// do for every incoming CPE
-		for (String currentCpe : cpes) {
-			// get every separate word from the CPE
-			String[] currentCpeArr = currentCpe.split(" ");
-			String[] commonWords = {"server", "Components", "FTP"};
-			ArrayList<String> currentCpeArrList = new ArrayList<>();
-			Collections.addAll(currentCpeArrList, currentCpeArr);
-			ArrayList<String> commonWordsArrList = new ArrayList<>();
-			Collections.addAll(commonWordsArrList, commonWords);
-
-			// remove the common words from the CPE words
-			currentCpeArrList.removeAll(commonWordsArrList);
-
-			// Put in the "cweFilteredArrayList" the CWEs that are related
-			// to each of the CPEs, searching the RVD Vulnerabilities
-			ArrayList<String> cweFilteredArrayList = new ArrayList<>();
-			// for every separate word of the CPE
-			for (String value : currentCpeArrList) {
-				//System.out.println("current CPE: " + value);
-
-				// for every RVD vulnerability
-				for (RvdVulnerability currentVuln : rvdVulnerabilities) {
-					// check the title, description, system and vendor elements
-					boolean titleFlag = false;
-					if (currentVuln.title != null) {
-						if (currentVuln.title.contains(value)) {
-							titleFlag = true;
-						}
-					}
-					boolean descriptionFlag = false;
-					if (currentVuln.description != null) {
-						if (currentVuln.description.contains(value)) {
-							descriptionFlag = true;
-						}
-					}
-					boolean systemFlag = false;
-					if (currentVuln.system != null) {
-						if (currentVuln.system.contains(value)) {
-							systemFlag = true;
-						}
-					}
-					boolean vendorFlag = false;
-					if (currentVuln.vendor != null) {
-						if (currentVuln.vendor.contains(value)) {
-							vendorFlag = true;
-						}
-					}
-					if (titleFlag || descriptionFlag || systemFlag || vendorFlag) {
-						cweFilteredArrayList.add(currentVuln.cwe);
-						//System.out.println("current CVE: " + currentVuln.cve);
-					}
-				}
-			}
-
-			/*// print the "cweFilteredArrayList"
-			System.out.println(" ");
-			System.out.println("cweFilteredArrayList: ");
-			for (String s : cweFilteredArrayList) {
-				System.out.println(s);
-			}
-			System.out.println(" ");*/
-
-			// Put in the "capecsIdentified" list the CAPECs that are related
-			// to each of the CWEs identified above, searching the CAPEC repo
-			for (String s : cweFilteredArrayList) {
-				//remove the first 4 charactes eg: "CWE-115" becomes "115"
-				String tempCWE = s.substring(4);
-				for (AttackPattern tempCapec : capecs) {
-					if (tempCapec.related_Weaknesses != null) {
-						for (int l = 0; l < tempCapec.related_Weaknesses.related_Weakness.size(); l++) {
-							RelatedWeakness tempRelatedWeakness = tempCapec.related_Weaknesses.related_Weakness.get(l);
-							if (tempRelatedWeakness.cWEID.equals(tempCWE)) {
-								capecsIdentified.add(tempCapec);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// print the list with the identified CAPECs
-		System.out.println(" ");
-		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
-		if (capecsIdentified.size()>0) {
-			for (AttackPattern attackPattern : capecsIdentified) {
-				System.out.print(" " + attackPattern.iD);
-			}
-		}
-		System.out.println(" ");
-		System.out.println("capecsIdentified.size= " + capecsIdentified.size());
-		System.out.println(" ");
-
-		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
-		// and depict the matched Template attack trees
-		visualizeAttackTrees(getMatchingTemplateTrees());
-
-		return "rvdresult";
-	}
-
-	// fill capecsIdentified list with predefined CAPECs
-	@PostMapping(value = "/fillCapecsIdentifiedList")
-	public String fillCapecsIdentifiedList(@RequestBody ArrayList<String> capecIds) {
-
-		// clean the list
-		capecsIdentified.clear();
-
-		// Put in the "capecsIdentified" list the CAPECs that are included in capecIds list
-		for (String s : capecIds) {
-			for (AttackPattern tempCapec : capecs) {
-				if (tempCapec.iD.equals(s)) {
-					capecsIdentified.add(tempCapec);
-					break;
-				}
-			}
-		}
-
-		/*// print the list with the identified CAPECs
-		System.out.println(" ");
-		System.out.println("The following CAPECs have been identified as potential attacks related to list of incoming CVE-IDs:");
-		if (capecsIdentified.size()>0) {
-			for (AttackPattern attackPattern : capecsIdentified) {
-				System.out.print(" " + attackPattern.iD);
-			}
-		}
-		System.out.println(" ");
-		System.out.println("The predefined capecsIdentified is created");
-		System.out.println(" ");*/
-
-		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
-		// and depict the matched Template attack trees
-		visualizeAttackTrees(getMatchingTemplateTrees());
-
-		return "rvdresult";
-	}
-
-
 	// ************************************************ (start) Template Attack trees ************************************************
-
-	// Creates a Template attack tree where the root attack is to cause a crash between a robot and a person
+	// API to create a Template attack tree where the root attack is to cause a crash between a robot and a person
 	@GetMapping("/templateTree")
 	public String createRobotCrashesWithPersonTemplateAttackTree () {
 
@@ -661,7 +650,7 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
-	// Creates a Template attack tree where the root attack is to cause a crash between a robot and a person
+	// API to create a Template attack tree where the root attack is to cause a crash between a robot and a person
 	// and different gates than the previous one.
 	@GetMapping("/templateTree2")
 	public String createRobotCrashesWithPersonTemplateAttackTree2 () {
@@ -733,7 +722,7 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
-	// create a Template Attack tree for KIOS #1
+	// API to create a Template Attack tree for KIOS #1
 	@GetMapping("/kiosΤemplateTree1")
 	public String kiosTemplateAttackTree1 () {
 
@@ -844,7 +833,7 @@ public class GreetingController {
 		return "rvdresult";
 	}
 
-	// create a Template Attack tree for KIOS #1
+	// API to create a Template Attack tree for KIOS #1
 	@GetMapping("/kiosΤemplateTree2")
 	public String kiosTemplateAttackTree2 () {
 
@@ -1058,12 +1047,10 @@ public class GreetingController {
 
 		return "rvdresult";
 	}
-
 	// ************************************************ (end) Template Attack trees ************************************************
 
-
 	// ******************************** (start) methods to select Template Attack trees ***********************************
-	// returns all the matched template trees
+	// method to return all the matched template trees
 	public CanPrecedeTree2 getMatchingTemplateTrees () {
 		CanPrecedeTree2 matchingTrees = new CanPrecedeTree2();
 
@@ -1094,7 +1081,7 @@ public class GreetingController {
 		return matchingTrees;
 	}
 
-	// checks if a given node (=tree) is a match or not based on the identified capecs
+	// method to check if a given Tree (=CanPrecedeNode2) is a match or not, based on the identified CAPECs
 	public boolean checkLeavesFromCanPrecedeNode2(CanPrecedeNode2 node) {
 
 		boolean matchFlag = true;
@@ -1150,7 +1137,7 @@ public class GreetingController {
 		}
 	}
 
-	// checks if a given CAPEC belongs in the capecsIdentified list
+	// method to check if a given CAPEC belongs in the capecsIdentified list
 	public boolean checkCapec (String capec) {
 		// get only the number from the CAPEC ID
 		String justTheCapecNumber = capec.substring(capec.indexOf("-")+1);
@@ -1169,7 +1156,11 @@ public class GreetingController {
 	}
 	// ******************************** (end) methods to select Template Attack trees *************************************
 
+	// method to visualize a Tree (=CanPrecedeNode2)
 	public void visualizeAttackTrees (CanPrecedeTree2 trees) {
+		// clean nodes2 and edges2 lists
+		nodes2.clear();
+		edges2.clear();
 		// for every tree
 		for (int i = 0; i < trees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTree = trees.getNodes().get(i);
@@ -1192,6 +1183,7 @@ public class GreetingController {
 
 	}
 
+	// method to create the nodes and edges of a given Tree (=CanPrecedeNode2)
 	public void createNodesEdges(int index, CanPrecedeNode2 currentNode) {
 
 		Node node = new Node();
@@ -1255,7 +1247,7 @@ public class GreetingController {
 		}
 	}
 
-	// it works
+	// method to print a Tree (=CanPrecedeNode2)
 	public void printCanPrecedeNode2(CanPrecedeNode2 node) {
 		if (node.getChildren().size() > 0) {
 			for (int i = 0; i < node.getChildren().size(); i++) {
@@ -1267,6 +1259,11 @@ public class GreetingController {
 			System.out.println(" ");
 		}
 	}
+
+
+
+
+
 
 	// ******************************** (start) methods to be tested *************************************
 	@PostMapping(value = "/searchwithcve")
