@@ -48,4 +48,20 @@ public class AttackPattern{
     public Notes notes;
     @JsonProperty("Alternate_Terms") 
     public AlternateTerms alternate_Terms;
+
+    public Object getDescription() {
+        return description;
+    }
+
+    public void setDescription(Object description) {
+        this.description = description;
+    }
+
+    public Mitigations getMitigations() {
+        return mitigations;
+    }
+
+    public void setMitigations(Mitigations mitigations) {
+        this.mitigations = mitigations;
+    }
 }

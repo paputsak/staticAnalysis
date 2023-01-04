@@ -7,15 +7,27 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
+import capec.model.AttackPattern;
+import com.google.gson.Gson;
+import cvesearch.CveSearchVulnerability;
+import ode.CommonAttack;
+import ode.CommonVulnerability;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import rvd.model.RvdVulnerability;
 
+import static com.sesame.securitycompoment.SecurityComponentApplication.capecsIdentified;
+
 public class DomParserDemo {
 
     public static ArrayList<String> openVasCves = new ArrayList<>();
+    public static ArrayList<CveSearchVulnerability> vulnerabilitiesIdentified = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -57,6 +69,9 @@ public class DomParserDemo {
                 System.out.println("Call executeCommand() method for CVE: " + openVasCves.get(i) + " Response: " + commandResponse);
             }
 
+            // Create all the ODE CommonVulnerability objects based on the "vulnerabilitiesIdentified" list
+            createOdeCommonVulnerability();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,6 +97,11 @@ public class DomParserDemo {
             int exitVal = process.waitFor();
             if (exitVal == 0) {
                 System.out.println("Success! Command has been executed!");
+
+                Gson g = new Gson();
+                CveSearchVulnerability c = g.fromJson(output.toString(), CveSearchVulnerability.class);
+                vulnerabilitiesIdentified.add(c);
+
                 return output.toString();
             } else {
                 //abnormal...
@@ -92,5 +112,30 @@ public class DomParserDemo {
         }
 
         return "executeCommand method";
+    }
+
+    public static ArrayList<CommonVulnerability> createOdeCommonVulnerability() {
+
+        //create commonVulnerabilities list
+        ArrayList<CommonVulnerability> commonVulnerabilities = new ArrayList<>();
+
+        for (int i = 0; i < vulnerabilitiesIdentified.size(); i++) {
+            CveSearchVulnerability currentVulnerability = vulnerabilitiesIdentified.get(i);
+
+            CommonVulnerability commonVulnerability = new CommonVulnerability();
+            commonVulnerability.setCveId(currentVulnerability.getId());
+            commonVulnerability.setCvssScore((float) currentVulnerability.getCvss3());
+            commonVulnerability.setCvssVector(currentVulnerability.getCvss3Vector());
+            commonVulnerabilities.add(commonVulnerability);
+        }
+
+        //print commonVulnerabilities list
+        for (int i = 0; i < commonVulnerabilities.size(); i++) {
+            CommonVulnerability commonVulnerability = commonVulnerabilities.get(i);
+            System.out.println("CommonVulnerability: " + commonVulnerability);
+
+        }
+
+        return commonVulnerabilities;
     }
 }
