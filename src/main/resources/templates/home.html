@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/smart_wizard.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/smart_wizard_theme_arrows.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/jquery.smartWizard.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <style> body{background-color: #eee}.form-control:focus{color: #495057;background-color: #fff;border-color: #80bdff;outline: 0;box-shadow: 0 0 0 0rem rgba(0,123,255,.25)}.btn-secondary:focus{box-shadow: 0 0 0 0rem rgba(108,117,125,.5)}.close:focus{box-shadow: 0 0 0 0rem rgba(108,117,125,.5)}.mt-200{margin-top:200px} </style>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/css/all.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid min-vh-100">
+    <div class="row min-vh-100">
+        <nav class="col-md-3 d-block">
+            <div class="text-center">
+                <img class="d-block mx-auto my-4" src="images/SESAME_Logo.svg" alt="">
+            </div>
+
+            <ul class="nav nav-pills flex-column mb-3 mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/home">
+                        <i class="fa fa-solid fa-play" aria-hidden="true"></i> Wizard steps
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">
+                        <i class="fa fa-solid fa-1" aria-hidden="true"></i> System Description
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">
+                        <i class="fa fa-solid fa-2" aria-hidden="true"></i> Vulnerability Scanning
+                    </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">
+                        <i class="fa fa-solid fa-3" aria-hidden="true"></i> Potential Attacks Identification
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/attackTreeVis">
+                        <i class="fa fa-solid fa-4" aria-hidden="true"></i> Attack Tree Visualization
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/home">
+                        <i class="fa fa-solid fa-5" aria-hidden="true"></i> Blablabla
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link " href="/home">
+                        <i class="fa fa-solid fa-6" aria-hidden="true"></i> Images
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto pt-3 px-4">
+
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">Wizard steps</h1>
+                <!--<div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownUserButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user" aria-hidden="true"></i> admin
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownUserButton">
+                            <a class="dropdown-item text-secondary" data-toggle="modal" data-target="#aboutModal">About</a>
+
+                            <a class="dropdown-item text-secondary" href="/change_password?next=/services">Change password</a>
+                            <a class="dropdown-item text-secondary" href="https://github.com/CARV-ICS-FORTH/karvdash/issues" target="_blank">Report an issue</a>
+                            <a class="dropdown-item text-secondary" href="/static/docs/index.html" target="_blank">Documentation</a>
+                            <a class="dropdown-item text-secondary" href="/logout">Logout</a>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+
+            <!--<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="aboutModalLabel">About</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            This installation is running <a class="text-secondary" href="https://github.com/CARV-ICS-FORTH/karvdash" target="_blank">Karvdash</a> version 3.0.3.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+
+            <div class="row">
+                <!--<div class="col-md-2 order-md-2">
+                    <button type="button" class="d-block btn btn-success mb-2 w-100" data-toggle="modal" data-target="#newServiceModal"><i class="fa fa-magic" aria-hidden="true"></i> New service</button>
+                </div>
+
+                <div class="modal fade" id="newServiceModal" tabindex="-1" role="dialog" aria-labelledby="newServiceModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="newServiceModalLabel">New service</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <form method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="rMrsYbZiNz7yh7un016Me3uw6nVjwGm9GY6Ze6GwWJjhHZaFi715Av6bOEoaKnag">
+
+
+                                    <div id="div_id_id" class="form-group"> <label for="id_id" class=" requiredField">
+                                        Service to create<span class="asteriskField">*</span> </label> <div class=""> <select name="id" class="select form-control" id="id_id"> <option value="datafusion-connector">DataFusion connector: DataFusion connector to Elasticsearch search engine and Kibana frontend</option> <option value="filebrowser">File Browser: Frontend for viewing folder contents</option> <option value="hello-kubernetes">Hello Kubernetes: Show a message in a web page</option> <option value="hello-kubernetes-forthfog1">Hello Kubernetes FORTHFOG1: Show a message in a web page</option> <option value="hello-kubernetes-grnedge1">Hello Kubernetes GRNEDGE1: Show a message in a web page</option> <option value="hello-kubernetes-grnfog1">Hello Kubernetes GRNFOG1: Show a message in a web page</option> <option value="hello-kubernetes-mtfog2">Hello Kubernetes MTFOG2: Show a message in a web page</option> <option value="hello-kubernetes-nodename-goga">Hello Kubernetes NODENAME: Show a message in a web page</option> <option value="hello-kubernetes-uns-edge-arm">Hello Kubernetes UNSEDGE2 ARM: Show a message in a web page for ARM</option> <option value="hello-kubernetes-unsfog">Hello Kubernetes UNSFOG1: Show a message in a web page</option> <option value="kafka_retention">Kafka with custom retention: Distributed streaming platform. log.retention.bytes = 5GB, log.retention.ms = 2 hours</option> <option value="kafka">Kafka_old: Distributed streaming platform</option> <option value="kubebox">Kubebox: Terminal and web console</option> <option value="minio">Minio: Amazon S3 compatible object storage server</option> <option value="neo4j">Neo4j: Neo4j graph database</option> <option value="nginx">Nginx: Web server</option> <option value="nifi">NiFi: System to process and distribute data</option> <option value="nifinew">NiFiNew: System to process and distribute data</option> <option value="nifinewForthFog">NiFiNewForthFog: System to process and distribute data</option> <option value="nifinewunsfog-zytu">NiFiNewUNSFog: System to process and distribute data</option> <option value="postgresql">PostgreSQL: Database server</option> <option value="rabbitmq">RabbitMQ: Message-broker software</option> <option value="redis">Redis: In-memory key-value store</option> <option value="smartviz">SmartViz: SmartViz frontend</option> <option value="smartviz-demo">SmartViz DEMO: SmartViz demo version</option> <option value="tensorboard">TensorBoard: Visualization toolkit for TensorFlow</option> <option value="ubuntu">Ubuntu: Ubuntu operating system</option> <option value="ubuntu-mtfog2-wotl">Ubuntu MTFOG2: Ubuntu operating system</option> <option value="zookeeper">ZooKeeper: Distributed configuration service</option> <option value="mqtt-kubernetes-broker-forthfog">mqtt Kubernetes broker FORTHFog1: deploy mqtt in the FORTH Fog</option> <option value="pgadmin">pgAdmin: Admin for PostgreSQL database server</option> <option value="rtsp">rtsp server: A simple rtsp server</option>
+
+                                    </select> </div> </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-success" name="action" value="Create">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-10 order-md-1">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+
+
+                            <li class="breadcrumb-item active"><i class="fa fa-university" aria-hidden="true"></i> https://10.96.0.1:443</li>
+
+
+                        </ol>
+                    </nav>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col"></th>
+
+
+                            <th scope="col">
+
+                                <a class="text-dark" href="/services?sort_by=name&amp;order=desc">Name</a>
+
+
+                                <i class="fa fa-caret-up" aria-hidden="true"></i>
+
+                            </th>
+
+                            <th scope="col">
+
+                                <a class="text-dark" href="/services?sort_by=created&amp;order=asc">Created</a>
+
+
+                            </th>
+
+
+                            <th scope="col" style="width: 140px;"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr>
+                            <th scope="row" class="align-middle"><i class="fa fa-cog" aria-hidden="true"></i></th>
+                            <td class="align-middle">
+
+                                <a class="text-secondary" href="https://kubebox-admin.marvel-platform.eu" target="_blank">kubebox</a>
+
+                            </td>
+                            <td class="align-middle">8/6/2022 08:51</td>
+                            <td class="align-middle py-0">
+
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownActionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Actions
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownActionsButton">
+                                        <button type="button" class="dropdown-item btn-sm text-secondary confirm-remove" data-toggle="modal" data-target="#removeModal" id="kubebox"><i class="fa fa-bomb" aria-hidden="true"></i> Remove</button>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row" class="align-middle"><i class="fa fa-cog" aria-hidden="true"></i></th>
+                            <td class="align-middle">
+
+                                <a class="text-secondary" href="https://smartviz-admin.marvel-platform.eu" target="_blank">smartviz</a>
+
+                            </td>
+                            <td class="align-middle">22/9/2022 09:14</td>
+                            <td class="align-middle py-0">
+
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownActionsButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Actions
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownActionsButton">
+                                        <button type="button" class="dropdown-item btn-sm text-secondary confirm-remove" data-toggle="modal" data-target="#removeModal" id="smartviz"><i class="fa fa-bomb" aria-hidden="true"></i> Remove</button>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                    <div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="removeModalLabel">Remove</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <form method="post">
+                                    <div class="modal-body">
+                                        Are you sure you want to remove "<span id="removeNameText"></span>"? The action will be permanent.
+                                        <input type="hidden" name="csrfmiddlewaretoken" value="rMrsYbZiNz7yh7un016Me3uw6nVjwGm9GY6Ze6GwWJjhHZaFi715Av6bOEoaKnag">
+                                        <input type="hidden" name="service" value="" id="removeNameInput">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <input type="submit" class="btn btn-success" name="action" value="Remove">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>-->
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row d-flex justify-content-center mt-200"> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"> Launch multistep Wizard </button> </div> <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Smart Wizard modal</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+                <div class="modal-body">
+                    <div id="smartwizard">
+                        <ul>
+                            <li><a href="#step-1">Step 1<br /><small>Identify System Assets</small></a></li>
+                            <li><a href="#step-2">Step 2<br /><small>Identify Communication Protocols</small></a></li>
+                            <li><a href="#step-3">Step 3<br /><small>Identify Physical Entry Points</small></a></li>
+                            <li><a href="#step-4">Step 4<br /><small>Confirm details</small></a></li>
+                        </ul>
+                        <div class="mt-4">
+                            <div id="step-1">
+                                <div class="row">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Name" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Email" required> </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Password" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Repeat password" required> </div>
+                                </div>
+                            </div>
+                            <div id="step-2">
+                                <div class="row">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Address" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="City" required> </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="State" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Country" required> </div>
+                                </div>
+                            </div>
+                            <div id="step-3" class="">
+                                <div class="row">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Card Number" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Card Holder Name" required> </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="CVV" required> </div>
+                                    <div class="col-md-6"> <input type="text" class="form-control" placeholder="Mobile Number" required> </div>
+                                </div>
+                            </div>
+                            <div id="step-4" class="">
+                                <div class="row">
+                                    <div class="col-md-12"> <span>Thanks For submitting your details with BBBootstrap.com. we will send you a confirmation email. We will review your details and revert back.</span> </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+
+    $('#smartwizard').smartWizard({
+        selected: 0,
+        theme: 'arrows',
+        autoAdjustHeight:true,
+        transitionEffect:'fade',
+        showStepURLhash: false,
+    });
+
+});
+</script>
+
+</body>
+</html>

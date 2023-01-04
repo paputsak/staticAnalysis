@@ -11,6 +11,7 @@ import capec.model.RelatedWeakness;
 import graph.model.Edge;
 import graph.model.Graph;
 import graph.model.Node;
+import ode.CommonAttack;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,6 +88,24 @@ public class GreetingController {
 		return "attackTrees";
 	}
 
+	// API for the home page
+	@GetMapping("/home")
+	public String getHome(Model model) {
+		/*model.addAttribute("nodes2", nodes2);
+		model.addAttribute("edges2", edges2);
+		model.addAttribute("trees", canPrecedeGraphs.getNodes());*/
+		return "home";
+	}
+
+	// API for the home page
+	@GetMapping("/attackTreeVis")
+	public String getAttackTreeVis(Model model) {
+		model.addAttribute("nodes2", nodes2);
+		model.addAttribute("edges2", edges2);
+		model.addAttribute("trees", canPrecedeGraphs.getNodes());
+		return "attackTreeVis";
+	}
+
 	/*@GetMapping("/attackgraph")
 	public String attackgraph(Model model) {
 
@@ -115,6 +134,10 @@ public class GreetingController {
 		//Generate the capec database (capecs) with the input from the capecXML array
 		capecs=capecJson.attack_Pattern_Catalog.attack_Patterns.attack_Pattern;
 		System.out.println("Local CAPEC Repository has been updated. " + capecs.size() + " known attacks have been stored.");
+
+		for (int i = 0; i < capecs.size(); i++) {
+			System.out.println("capec: " + capecs.get(i).description);
+		}
 
 		// create the canPrecede trees
 		//canPrecedeTrees = createCanPrecedeTrees(createCanPrecedeNodes(createCanPrecedeLists()));
@@ -270,6 +293,9 @@ public class GreetingController {
 		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
 		// and depict the matched Template attack trees
 		visualizeAttackTrees(getMatchingTemplateTrees());
+
+		// Create all the ODE CommonAttack objects based on the "capecsIdentified" list
+		createOdeCommonAttack();
 
 		return "rvdresult";
 	}
@@ -1161,6 +1187,7 @@ public class GreetingController {
 		// clean nodes2 and edges2 lists
 		nodes2.clear();
 		edges2.clear();
+
 		// for every tree
 		for (int i = 0; i < trees.getNodes().size(); i++) {
 			CanPrecedeNode2 currentTree = trees.getNodes().get(i);
@@ -1464,5 +1491,36 @@ public class GreetingController {
 		return "rvdresult";
 	}
 	// ******************************** (end) methods to be tested *************************************
+
+	public ArrayList<CommonAttack> createOdeCommonAttack() {
+
+		//create commonAttacks list
+		ArrayList<CommonAttack> commonAttacks = new ArrayList<>();
+		for (int i = 0; i < capecsIdentified.size(); i++) {
+			AttackPattern currentAttackPattern = capecsIdentified.get(i);
+
+			CommonAttack commonAttack = new CommonAttack();
+			commonAttack.setCapecId(currentAttackPattern.iD);
+			commonAttack.setTitle(currentAttackPattern.name);
+			commonAttack.setCapecDescription(currentAttackPattern.getDescription().toString());
+			commonAttack.setSeverity(currentAttackPattern.typical_Severity);
+			commonAttack.setType(currentAttackPattern.abstraction);
+			commonAttack.setLikelihood(currentAttackPattern.likelihood_Of_Attack);
+			commonAttack.setMitigation(currentAttackPattern.getMitigations().mitigation.toString());
+			commonAttack.setRelatedCapecs(currentAttackPattern.related_Attack_Patterns.getRelated_Attack_Pattern());
+			commonAttack.setRelatedCwes(currentAttackPattern.related_Weaknesses.getRelated_Weakness());
+
+			commonAttacks.add(commonAttack);
+		}
+
+		//print commonAttacks list
+		for (int i = 0; i < commonAttacks.size(); i++) {
+			CommonAttack currentCommonAttack = commonAttacks.get(i);
+			System.out.println("CommonAttack: " + currentCommonAttack);
+
+		}
+
+		return commonAttacks;
+	}
 
 }

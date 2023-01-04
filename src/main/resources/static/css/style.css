@@ -1,0 +1,70 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
+main {
+  background-color: #fff;
+}
+nav > div > img {
+  width: 90%;
+}
+.btn-success,
+.btn-success:visited {
+  background-color: rgb(24, 79, 120)!important;
+  border-color: rgb(24, 79, 120)!important;
+  box-shadow: none!important;
+}
+.btn-success:hover,
+.btn-success:active,
+.btn-success:focus {
+  background-color: rgb(14, 118, 189)!important;
+  border-color: rgb(14, 118, 189)!important;
+  box-shadow: none!important;
+}
+a:not(.btn),
+a:visited:not(.btn) {
+  color: rgb(24, 79, 120);
+}
+a.nav-link:hover,
+a.nav-link:active,
+a.nav-link:focus {
+  color: rgb(14, 118, 189);
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  /*color: #212529!important;*/
+  background-color: rgb(24, 79, 120)!important;
+}
+a.nav-link i.fa {
+  width: 1.4em;
+  text-align: center;
+}
+.dropdown-item.active, .dropdown-item:active {
+  background-color: rgb(14, 118, 189)!important;
+}
+.breadcrumb {
+  background-color: rgb(14, 118, 189);
+}
+.breadcrumb-item.active,
+.breadcrumb-item+.breadcrumb-item::before {
+  color: #ffffff;
+}
+table tbody tr td .btn {
+  display: none;
+}
+table tbody tr:hover td .btn {
+  display:inline-block;
+}
+.asteriskField {
+  display: none;
+}
+
+/*
+
+BD9631 197, 149, 47
+184F78 24, 79, 120
+0E77BB 14, 118, 189
+ BF2130 191, 29, 44
+ 
+ */
