@@ -41,6 +41,28 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
+
+	<!--	 pojo to xml lib start
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.woodstox</groupId>
+			<artifactId>woodstox-core</artifactId>
+			<version>6.2.5</version>
+		</dependency>
+		 pojo to xml lib end
+
+		 pretty print lib start
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.3</version>
+		</dependency>
+		 pretty print lib end-->
+
 	</dependencies>
 
 	<build>

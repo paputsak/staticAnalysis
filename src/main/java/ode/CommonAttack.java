@@ -2,7 +2,6 @@ package ode;
 
 import capec.model.RelatedAttackPattern;
 import capec.model.RelatedWeakness;
-import capec.model.RelatedWeaknesses;
 
 import java.util.ArrayList;
 
@@ -16,6 +15,12 @@ public class CommonAttack extends SecurityViolation {
     private String mitigation;
     private ArrayList<RelatedAttackPattern> relatedCapecs;
     private ArrayList<RelatedWeakness> relatedCwes;
+
+    private ArrayList<CommonVulnerability> relatedCves = new ArrayList<>();
+
+    public boolean addRelatedCve(CommonVulnerability vulnerability) {
+        return getRelatedCves().add(vulnerability);
+    }
 
     public String getCapecId() {
         return capecId;
@@ -89,6 +94,14 @@ public class CommonAttack extends SecurityViolation {
         this.relatedCwes = relatedCwes;
     }
 
+    public ArrayList<CommonVulnerability> getRelatedCves() {
+        return relatedCves;
+    }
+
+    public void setRelatedCves(ArrayList<CommonVulnerability> relatedCves) {
+        this.relatedCves = relatedCves;
+    }
+
     @Override
     public String toString() {
         return "CommonAttack{" +
@@ -101,6 +114,7 @@ public class CommonAttack extends SecurityViolation {
                 ", mitigation='" + mitigation + '\'' +
                 ", relatedCapecs=" + relatedCapecs +
                 ", relatedCwes=" + relatedCwes +
+                ", relatedCves=" + relatedCves +
                 '}';
     }
 }

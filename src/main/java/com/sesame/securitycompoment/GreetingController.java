@@ -8,10 +8,18 @@ import capec.model.AttackPattern;
 import capec.model.Capec;
 import capec.model.RelatedAttackPattern;
 import capec.model.RelatedWeakness;
+import capecextractor.Cve;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import graph.model.Edge;
 import graph.model.Graph;
 import graph.model.Node;
-import ode.CommonAttack;
+import ode.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +27,16 @@ import org.springframework.web.bind.annotation.*;
 import rvd.model.RvdVulnerability;
 import xml.model.report;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 import static com.sesame.securitycompoment.SecurityComponentApplication.*;
+import static java.util.Objects.isNull;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
 @Controller
@@ -292,10 +304,30 @@ public class GreetingController {
 
 		// select the Template Attack Trees that match the CAPECs in the capecsIdentified list
 		// and depict the matched Template attack trees
-		visualizeAttackTrees(getMatchingTemplateTrees());
+		allMatchingTemplateAttackTrees = getMatchingTemplateTrees();
+		visualizeAttackTrees(allMatchingTemplateAttackTrees);
 
 		// Create all the ODE CommonAttack objects based on the "capecsIdentified" list
 		createOdeCommonAttack();
+
+		return "rvdresult";
+	}
+
+	// API for filling the cvesIdentified list
+	@PostMapping(value = "/fillCVEIdentifiedList")
+	public String fillCvesIdentifiedList(@RequestBody ArrayList<Cve> cves) throws IOException {
+
+	/*	for (int i = 0; i < cves.size(); i++) {
+			System.out.println(cves.get(i).toString());
+		}*/
+
+		createOdeCommonVulnerability(cves);
+
+		addRelatedVulnerabilitiesToCommonAttacks();
+
+		createFaultTree();
+
+		createOdeXmlJsonFiles();
 
 		return "rvdresult";
 	}
@@ -602,7 +634,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
 		orGate.setId(303);
 		orGate.setParentId(304);
-		orGate.setData("OR Gate");
+		orGate.setData("OR");
 		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(capec8);
@@ -642,7 +674,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
 		orGate2.setId(308);
 		orGate2.setParentId(309);
-		orGate2.setData("OR Gate");
+		orGate2.setData("OR");
 		orGate2.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate2.setChild(useRosCli);
@@ -784,7 +816,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
 		orGate.setId(105);
 		orGate.setParentId(106);
-		orGate.setData("OR Gate");
+		orGate.setData("OR");
 		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(capec75);
@@ -951,7 +983,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate5 = new CanPrecedeNode2();
 		orGate5.setId(213);
 		orGate5.setParentId(210);
-		orGate5.setData("OR Gate");
+		orGate5.setData("OR");
 		orGate5.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate5.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate5.setChild(capec148);
@@ -962,7 +994,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate4 = new CanPrecedeNode2();
 		orGate4.setId(212);
 		orGate4.setParentId(209);
-		orGate4.setData("OR Gate");
+		orGate4.setData("OR");
 		orGate4.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate4.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate4.setChild(capec482);
@@ -973,7 +1005,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate3 = new CanPrecedeNode2();
 		orGate3.setId(211);
 		orGate3.setParentId(208);
-		orGate3.setData("OR Gate");
+		orGate3.setData("OR");
 		orGate3.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate3.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate3.setChild(capec8);
@@ -1007,7 +1039,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate2 = new CanPrecedeNode2();
 		orGate2.setId(207);
 		orGate2.setParentId(203);
-		orGate2.setData("OR Gate");
+		orGate2.setData("OR");
 		orGate2.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate2.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate2.setChild(bufferOverflow);
@@ -1047,7 +1079,7 @@ public class GreetingController {
 		CanPrecedeNode2 orGate = new CanPrecedeNode2();
 		orGate.setId(202);
 		orGate.setParentId(201);
-		orGate.setData("OR Gate");
+		orGate.setData("OR");
 		orGate.setExtendedDescription("Any single child is sufficient to lead to the parent state.");
 		orGate.setNodeType(CanPrecedeNode2.Type.GATE);
 		orGate.setChild(dosAttack);
@@ -1495,7 +1527,7 @@ public class GreetingController {
 	public ArrayList<CommonAttack> createOdeCommonAttack() {
 
 		//create commonAttacks list
-		ArrayList<CommonAttack> commonAttacks = new ArrayList<>();
+		//ArrayList<CommonAttack> commonAttacks = new ArrayList<>();
 		for (int i = 0; i < capecsIdentified.size(); i++) {
 			AttackPattern currentAttackPattern = capecsIdentified.get(i);
 
@@ -1506,9 +1538,15 @@ public class GreetingController {
 			commonAttack.setSeverity(currentAttackPattern.typical_Severity);
 			commonAttack.setType(currentAttackPattern.abstraction);
 			commonAttack.setLikelihood(currentAttackPattern.likelihood_Of_Attack);
-			commonAttack.setMitigation(currentAttackPattern.getMitigations().mitigation.toString());
-			commonAttack.setRelatedCapecs(currentAttackPattern.related_Attack_Patterns.getRelated_Attack_Pattern());
-			commonAttack.setRelatedCwes(currentAttackPattern.related_Weaknesses.getRelated_Weakness());
+			if (currentAttackPattern.getMitigations()!=null) {
+				commonAttack.setMitigation(currentAttackPattern.getMitigations().mitigation.toString());
+			}
+			if (currentAttackPattern.related_Attack_Patterns!=null) {
+				commonAttack.setRelatedCapecs(currentAttackPattern.related_Attack_Patterns.getRelated_Attack_Pattern());
+			}
+			if (currentAttackPattern.related_Weaknesses!=null) {
+				commonAttack.setRelatedCwes(currentAttackPattern.related_Weaknesses.getRelated_Weakness());
+			}
 
 			commonAttacks.add(commonAttack);
 		}
@@ -1516,11 +1554,224 @@ public class GreetingController {
 		//print commonAttacks list
 		for (int i = 0; i < commonAttacks.size(); i++) {
 			CommonAttack currentCommonAttack = commonAttacks.get(i);
-			System.out.println("CommonAttack: " + currentCommonAttack);
+			//System.out.println("CommonAttack: " + currentCommonAttack);
 
 		}
 
 		return commonAttacks;
+	}
+
+	public ArrayList<CommonVulnerability> createOdeCommonVulnerability(ArrayList<Cve> cvesIdentified) {
+
+		//create commonAttacks list
+		//ArrayList<CommonVulnerability> commonVulnerabilities = new ArrayList<>();
+		for (int i = 0; i < cvesIdentified.size(); i++) {
+			Cve currentCve = cvesIdentified.get(i);
+
+			CommonVulnerability commonVulnerability = new CommonVulnerability();
+			commonVulnerability.setCveId(currentCve.getCveId());
+			commonVulnerability.setVulnerabilityDescription(currentCve.getVulnerabilityDescription());
+
+
+
+			if (currentCve.getSeverityDescription()!= null) {
+				commonVulnerability.setSeverityDescription(currentCve.getSeverityDescription());
+			}
+			if ( currentCve.getCvssVector()!=null ) {
+				commonVulnerability.setCvssVector(currentCve.getCvssVector());
+			}
+			if ( !isNull(currentCve.getCvssScore()) ) {
+				commonVulnerability.setCvssScore((float) currentCve.getCvssScore());
+			}
+			if ( currentCve.getVulnerableAsset()!=null ) {
+				ArrayList<Asset> vulnerableAssets = new ArrayList<>();
+				for (int j = 0; j < currentCve.getVulnerableAsset().size(); j++) {
+					Asset asset = new Asset();
+					asset.setCpeId(currentCve.getVulnerableAsset().get(j));
+					vulnerableAssets.add(asset);
+				}
+				commonVulnerability.setVulnerableAsset(vulnerableAssets);
+			}
+			if ( currentCve.getCapecs() != null) {
+				commonVulnerability.setRelatedCapecs(currentCve.getCapecs());
+			}
+
+			commonVulnerabilities.add(commonVulnerability);
+		}
+
+		//print commonAttacks list
+		for (int i = 0; i < commonVulnerabilities.size(); i++) {
+			CommonVulnerability currentCommonVulnerability = commonVulnerabilities.get(i);
+			//System.out.println("CommonVulnerability: " + currentCommonVulnerability);
+
+		}
+
+		return commonVulnerabilities;
+	}
+
+	public String addRelatedVulnerabilitiesToCommonAttacks() {
+
+		// for every common vulnerability
+		for (int i = 0; i < commonVulnerabilities.size(); i++) {
+			CommonVulnerability currentCommonVulnerability = commonVulnerabilities.get(i);
+			//System.out.println("Check this out "+currentCommonVulnerability.getCveId());
+			// for every related CAPEC of the common vulnerability
+		if(currentCommonVulnerability.getRelatedCapecs()!=null) {
+			for (int j = 0; j < currentCommonVulnerability.getRelatedCapecs().size(); j++) {
+				String currentRelatedCapec = currentCommonVulnerability.getRelatedCapecs().get(j);
+				// for every common attack
+				for (int k = 0; k < commonAttacks.size(); k++) {
+					CommonAttack currentCommonAttack = commonAttacks.get(k);
+					// add a vulnerability to the current common attack
+
+					if (currentRelatedCapec.equals(currentCommonAttack.getCapecId())) {
+						currentCommonAttack.addRelatedCve(currentCommonVulnerability);
+					}
+				}
+			}
+		}
+		}
+		return "response from addRelatedVulnerabilitiesToCommonAttacks()";
+	}
+
+	public String createFaultTree() {
+
+		// for every of the matching template trees
+//		for (int i = 0; i < allMatchingTemplateAttackTrees.getNodes().size(); i++) {
+		for (int i = 0; i < 1; i++) {
+
+			CanPrecedeNode2 currentTree = allMatchingTemplateAttackTrees.getNodes().get(i);
+
+			// 1. the root node is a ODE fault tree and a ODE cause
+			FaultTree faultTree = new FaultTree();
+			ArrayList<Cause> causes = new ArrayList<>();
+
+			generateFaultTreeFromTemplate(currentTree, causes);
+			faultTree.setCauses(causes);
+
+
+
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			String faultTreeStringJson = gson.toJson(faultTree);
+			System.out.println(faultTreeStringJson);
+
+
+
+			// 2. the children nodes are ODE causes
+			// 3. the ODE gates are children of ODE causes and gates are children of nodes, so ODE gates are gates
+			//    (we assume that the father is included in the children list of a Gate)
+			// 4. CAPECs are ODE CAPECs
+			//
+
+
+		}
+
+
+
+		return "response";
+	}
+
+	public String createOdeXmlJsonFiles() throws IOException {
+
+		// create the output for ODE
+		ObjectMapper jsonMapper = new ObjectMapper();
+
+		//create folder if it doesn't exist
+		File folder = new File("./output");
+		if (!folder.exists()){
+			folder.mkdir();
+		}
+
+		//create final files
+		FileWriter jsonFileWriter = null;
+		jsonFileWriter = new FileWriter(folder.getCanonicalPath()+"/output.json");
+
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonElement element = gson.toJsonTree(commonAttacks, new TypeToken<ArrayList<CommonAttack>>() {}.getType());
+		String listCommonAttacks=gson.toJson(element);
+
+		// write to the file
+		jsonFileWriter.write(listCommonAttacks);
+
+		//close files to finalise the content.
+		if (jsonFileWriter != null) {
+			jsonFileWriter.flush();
+			jsonFileWriter.close();
+		}
+
+		return "JSON file with the ODE common attacks has been created!";
+	}
+
+	public Gate getCauseFromNode(CanPrecedeNode2 node2) {
+
+		Gate cause = new Gate();
+		cause.setType("BasicEvent");
+		ArrayList<Failure> failures = new ArrayList<>();
+
+		switch(node2.getNodeType()) {
+			case STATE:
+				CommonState commonState = new CommonState();
+				commonState.setTitle(node2.getData());
+				failures.add(commonState);
+				break;
+			case CAPEC:
+				for (int i = 0; i < capecs.size(); i++) {
+					AttackPattern currentAttackPattern = capecs.get(i);
+
+					if (node2.getData().equals("CAPEC-" + currentAttackPattern.iD)){
+						CommonAttack commonAttack = new CommonAttack();
+						commonAttack.setCapecId(currentAttackPattern.iD);
+						commonAttack.setTitle(currentAttackPattern.name);
+						commonAttack.setCapecDescription(currentAttackPattern.getDescription().toString());
+						commonAttack.setSeverity(currentAttackPattern.typical_Severity);
+						commonAttack.setType(currentAttackPattern.abstraction);
+						commonAttack.setLikelihood(currentAttackPattern.likelihood_Of_Attack);
+						if (currentAttackPattern.getMitigations() != null) {
+							commonAttack.setMitigation(currentAttackPattern.getMitigations().mitigation.toString());
+						}
+						if (currentAttackPattern.related_Attack_Patterns != null) {
+							commonAttack.setRelatedCapecs(currentAttackPattern.related_Attack_Patterns.getRelated_Attack_Pattern());
+						}
+						if (currentAttackPattern.related_Weaknesses != null) {
+							commonAttack.setRelatedCwes(currentAttackPattern.related_Weaknesses.getRelated_Weakness());
+						}
+
+						failures.add(commonAttack);
+						break;
+					}
+				}
+				break;
+			case GATE:
+				cause.setGateType(node2.getData());
+				System.out.println("This gate is :" + cause.getGateType());
+				ArrayList<Cause> children = new ArrayList<>();
+				for (int i = 0; i <node2.getChildren().size() ; i++) {
+					children.add(getCauseFromNode(node2.getChildren().get(i)));
+
+				}
+				cause.setCauses(children);
+				break;
+			default:
+				// code block
+		}
+		cause.setFailures(failures);
+		return cause;
+	}
+
+	// gets input an empty ArrayList of Causes amd fill it from the nodes of a Template attack tree
+	public ArrayList<Cause> generateFaultTreeFromTemplate(CanPrecedeNode2 node2, ArrayList<Cause> causes) {
+		causes.add(getCauseFromNode(node2));
+		if (node2.getChildren().size() > 0) {
+			for (int j = 0; j < node2.getChildren().size(); j++) {
+				CanPrecedeNode2 currentChild = node2.getChildren().get(j);
+				generateFaultTreeFromTemplate(currentChild, causes);
+			}
+		} else {
+			System.out.println("This is a child. Node: " + node2.getData());
+		}
+
+		return causes;
 	}
 
 }

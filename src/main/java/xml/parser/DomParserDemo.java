@@ -16,6 +16,9 @@ import ode.CommonVulnerability;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -68,6 +71,16 @@ public class DomParserDemo {
                 commandResponse = executeCommand(openVasCves.get(i), fileName);
                 System.out.println("Call executeCommand() method for CVE: " + openVasCves.get(i) + " Response: " + commandResponse);
             }
+
+            // make a request to the API of another cve-search instance
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("accept", "application/json");
+            headers.set("limit", "2");
+            String resourceUrl = "http://139.91.71.34:5000/api/query";
+            Object[] cves = restTemplate.getForObject(resourceUrl, Object[].class);
+            System.out.printf("cves: ", cves);
+
 
             // Create all the ODE CommonVulnerability objects based on the "vulnerabilitiesIdentified" list
             createOdeCommonVulnerability();
@@ -132,7 +145,7 @@ public class DomParserDemo {
         //print commonVulnerabilities list
         for (int i = 0; i < commonVulnerabilities.size(); i++) {
             CommonVulnerability commonVulnerability = commonVulnerabilities.get(i);
-            System.out.println("CommonVulnerability: " + commonVulnerability);
+            //System.out.println("CommonVulnerability: " + commonVulnerability);
 
         }
 
