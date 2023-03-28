@@ -6,12 +6,26 @@ import canprecede.model.CanPrecedeTree2;
 import capec.model.AttackPattern;
 import capec.model.AttackPatterns;
 import capec.model.Capec;
+import capecextractor.Cve;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import graph.model.Graph;
+import ode.CommonAttack;
+import ode.CommonVulnerability;
+/*import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;*/
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import rvd.model.RvdVulnerability;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
+
+//import com.fasterxml.jackson.dataformat.xml.*;
 
 @SpringBootApplication
 public class SecurityComponentApplication {
@@ -45,6 +59,13 @@ public class SecurityComponentApplication {
 	// all the Attack Patterns of the CAPEC repository
 	public static ArrayList<AttackPattern> capecs;
 
+	// all the ODE Common Attacks
+	public static ArrayList<CommonAttack> commonAttacks = new ArrayList<>();
+
+	// all the ODE Common Vulnerabilities
+	public static ArrayList<CommonVulnerability> commonVulnerabilities = new ArrayList<>();
+
+
 	// all the trees created based on the canPrecede relationship among Attack Patterns
 	public static ArrayList<CanPrecedeTree> canPrecedeTrees;
 
@@ -53,6 +74,9 @@ public class SecurityComponentApplication {
 
 	// a list with all available Template attack trees
 	public static CanPrecedeTree2 allTemplateAttackTrees = new CanPrecedeTree2();
+
+	// a list with all Template attack trees, matching to a given set of CAPECs
+	public static CanPrecedeTree2 allMatchingTemplateAttackTrees = new CanPrecedeTree2();
 
 	// this is the array of graphs (=attack trees) created due to the
 	// canPrecede relationship among Attack Patterns
@@ -66,8 +90,5 @@ public class SecurityComponentApplication {
 		SpringApplication.run(SecurityComponentApplication.class, args);
 		System.out.println(logoName);
 
-
-
 	}
-
 }
